@@ -1,0 +1,24 @@
+# react-json-view 测试
+
+import ReactJson from 'react-json-view'
+import axios  from 'axios';
+
+export const View = function () {
+  const [fileContent, setFileContent] = React.useState({});
+  React.useEffect(() => {
+    axios.get('/api/file/read?path=package.json',{responseType: 'json'})
+      .then(response => {
+        setFileContent(response.data)
+      })
+      .catch(error => {
+         setFileContent(error.message);
+      });
+  }, []);
+  return (
+<ReactJson src={fileContent} />
+  );
+}
+
+
+<View />
+
