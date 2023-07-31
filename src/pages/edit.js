@@ -5,15 +5,21 @@ import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from "@codemirror/view";
 import axios from 'axios';
 import ReactJson from 'react-json-view'
-import { solarizedLight, solarizedLightInit, solarizedDark, solarizedDarkInit } from '@uiw/codemirror-theme-solarized';
+//import { solarizedLight, solarizedLightInit, solarizedDark, solarizedDarkInit } from '@uiw/codemirror-theme-solarized';
+import { duotoneLight, duotoneLightInit, duotoneDark, duotoneDarkInit } from '@uiw/codemirror-theme-duotone';
 
+const themes = {
+  light: duotoneLightInit,
+  dark: duotoneDarkInit
+}
 
 export default function Edit({ open = 'README.md', self = {}, ...props }) {
   const [file, setFile] = useState(open);
   const [value, setValue] = useState('');
   const [message, setMessage] = useState('loading...');
-  const [viewStat, SetViewStat] = useState('init');
-
+  const [viewStat, setViewStat] = useState('init');
+  const [theme, setTheme] = useState('dark');
+  
   self.file = file
   self.setFile = setFile
   self.message = message
@@ -27,11 +33,11 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
       .then(response => {
         setValue(response.data)
         setMessage('')
-        SetViewStat('running')
+        setViewStat('running')
       })
       .catch(error => {
         setMessage(error.message)
-        SetViewStat('suspend')
+        setViewStat('suspend')
       });
   }
 
@@ -61,6 +67,11 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
     self.load()
   }, [file]);
 
+  useEffect(()=>{
+    if (document.querySelector('html[data-theme=light]')){
+      setTheme('light')
+    }
+  },[])
 
 
   return (<>
@@ -69,9 +80,9 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
       value={value}
       extensions={[EditorView.lineWrapping]}
       onChange={onChange}
-      theme={solarizedLightInit({
+      theme={themes[theme]({
         settings: {
-          caret: '#c6c6c6',
+          // caret: '#c6c6c6',
           fontFamily: 'var(--ifm-font-family-monospace)',
         }
       })}
@@ -81,13 +92,18 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
 
 function Tool({ self, message, ...props }) {
   return (<div>
-    <div className='flex space-x-4 px-4'>
+    <div className='flex space-x-4 px-4 py-2'>
       <div>{self.file}</div>
       <div className='grow text-center'>{message}</div>
-      <button onClick={self.load}>Load</button>
-      <button onClick={self.save}>Save</button>
+      <Button onClick={self.load}>Load</Button>
+      <Button onClick={self.save}>Save</Button>
     </div>
   </div>)
 }
 
+function Button({onClick, children}){
+  return (<>
+    <button className='bg-transparent text-inherit border border-inherit  border-solid rounded' onClick={onClick}>{children}</button>
+  </>)
+}
 

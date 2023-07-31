@@ -5,7 +5,7 @@
  */
 
 /* You can override the default Infima variables here. */
-@import 'tailwindcss/base';
+/* @import 'tailwindcss/base'; */
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
@@ -40,8 +40,4 @@
 
 .react-json-view{
   font-family: var(--ifm-font-family-monospace) !important;
-}
-
-span {
-  display: inline-block;
 }
