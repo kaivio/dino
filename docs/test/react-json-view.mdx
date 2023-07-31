@@ -4,18 +4,21 @@ import ReactJson from 'react-json-view'
 import axios  from 'axios';
 
 export const View = function () {
-  const [fileContent, setFileContent] = React.useState({});
+  const [value, setValue] = React.useState({});
   React.useEffect(() => {
-    axios.get('/api/file/read?path=package.json',{responseType: 'json'})
-      .then(response => {
-        setFileContent(response.data)
-      })
-      .catch(error => {
-         setFileContent(error.message);
-      });
+    axios.get('/api/open',{
+      params:{file: 'package.json'}, 
+      responseType: 'json'
+    })
+    .then(response => {
+      setValue(response.data)
+    })
+    .catch(error => {
+      setValue(error.message)
+    });
   }, []);
   return (
-<ReactJson src={fileContent} />
+<ReactJson src={value} />
   );
 }
 
