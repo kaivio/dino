@@ -22,3 +22,35 @@ export const View = function () {
 
 <View />
 
+export const FontTest = () => {
+  const fonts = [
+    'Helvetica',
+    'Verdana',
+    'Tahoma',
+    'Times New Roman',
+    'Georgia',
+    'Palatino Linotype',
+    'Microsoft YaHei',
+    'FangSong',
+    'KaiTi'
+  ];
+  return (
+    <div className="font-test">
+      {fonts.map((font, index) => (
+        <div key={index} style={{ fontFamily: font }}>
+          <h2>{font}</h2>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed volutpat vestibulum nulla at ultrices.
+            Fusce dapibus justo non purus scelerisque facilisis. In hac habitasse platea dictumst.
+          </p>
+          <p>
+            英文内容 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed volutpat vestibulum nulla at ultrices.
+            Fusce dapibus justo non purus scelerisque facilisis. In hac habitasse platea dictumst.
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+<FontTest />

@@ -101,19 +101,19 @@ const config = {
             ],
           },
           {
-            title: 'Community',
+            title: 'Manual',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                label: 'Docusaurus',
+                href: 'https://docusaurus.io/docs/category/guides',
               },
               {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'Axios',
+                href: 'https://axios-http.com/zh/docs/api_intro',
               },
               {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                label: 'Express',
+                href: 'http://expressjs.com/zh-cn/guide/routing.html',
               },
             ],
           },
