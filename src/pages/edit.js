@@ -5,8 +5,10 @@ import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from "@codemirror/view";
 import axios from 'axios';
 import ReactJson from 'react-json-view'
-//import { solarizedLight, solarizedLightInit, solarizedDark, solarizedDarkInit } from '@uiw/codemirror-theme-solarized';
 import { duotoneLight, duotoneLightInit, duotoneDark, duotoneDarkInit } from '@uiw/codemirror-theme-duotone';
+
+
+import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 
 const themes = {
   light: duotoneLightInit,
@@ -19,7 +21,7 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
   const [message, setMessage] = useState('loading...');
   const [viewStat, setViewStat] = useState('init');
   const [theme, setTheme] = useState('dark');
-  
+
   self.file = file
   self.setFile = setFile
   self.message = message
@@ -78,7 +80,11 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
     <Tool self={self} message={message} />
     <CodeMirror
       value={value}
-      extensions={[EditorView.lineWrapping]}
+      extensions={[
+        EditorView.lineWrapping,
+        loadLanguage('markdown'),
+       // langs.markdown(),
+      ]}
       onChange={onChange}
       theme={themes[theme]({
         settings: {
@@ -88,6 +94,42 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
       })}
     />
   </>);
+}
+
+
+function EditGroup({}){
+  // 文件组: [{title, value, lang}]
+  // 当前活动视图: 0
+  // 视图切换事件
+  // 保存事件
+  // 重新加载事件
+  //
+  return (<>
+    <Tool self={self} message={message} />
+    <div>标签组</div>
+    <EditView />
+  </>)
+}
+
+
+
+// TODO: 参数支持：高度
+function EditView({value, lang, onChange, theme}){
+  return (
+    <CodeMirror
+      value={value}
+      extensions={[
+        EditorView.lineWrapping, // 自动换行
+        loadLanguage(lang),
+      ]}
+      onChange={onChange}
+      theme={themes[theme || 'light']({
+        settings: {
+          fontFamily: 'var(--ifm-font-family-monospace)',
+        }
+      })}
+    />
+  )
 }
 
 function Tool({ self, message, ...props }) {
