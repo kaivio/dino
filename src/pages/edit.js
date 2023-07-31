@@ -5,6 +5,8 @@ import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from "@codemirror/view";
 import axios from 'axios';
 import ReactJson from 'react-json-view'
+import { solarizedLight, solarizedLightInit, solarizedDark, solarizedDarkInit } from '@uiw/codemirror-theme-solarized';
+
 
 export default function Edit({ open = 'README.md', self = {}, ...props }) {
   const [file, setFile] = useState(open);
@@ -67,6 +69,12 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
       value={value}
       extensions={[EditorView.lineWrapping]}
       onChange={onChange}
+      theme={solarizedLightInit({
+        settings: {
+          caret: '#c6c6c6',
+          fontFamily: 'var(--ifm-font-family-monospace)',
+        }
+      })}
     />
   </>);
 }
