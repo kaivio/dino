@@ -10,6 +10,7 @@ const app = express();
 const proxy = httpProxy.createProxyServer();
 
 app.use(morgan('dev'));
+app.use(express.text());
 
 app.get('/api', (req, res) => {
   res.send('Hello World!')
@@ -17,8 +18,8 @@ app.get('/api', (req, res) => {
 
 
 // 读取文件内容
-app.get('/api/file/read', (req, res) => {
-    const filePath = req.query.path; // 文件路径
+app.get('/api/open', (req, res) => {
+    const filePath = req.query.file; // 文件路径
 
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
@@ -31,10 +32,11 @@ app.get('/api/file/read', (req, res) => {
 });
 
 // 写入文件内容
-app.post('/api/file/write', (req, res) => {
-    const filePath = req.query.path; // 文件路径
+app.put('/api/open', (req, res) => {
+    const filePath = req.query.file; // 文件路径
     const content = req.body; // 要写入的内容
-
+    console.log(filePath)
+    console.log(content)
     fs.writeFile(filePath, content, 'utf-8', err => {
         if (err) {
             console.error(err);
@@ -45,49 +47,6 @@ app.post('/api/file/write', (req, res) => {
     });
 });
 
-// 遍历文件夹并返回所有子项（包括子目录和文件）
-app.get('/api/folder/traverse', (req, res) => {
-    const folderPath = req.query.path; // 文件夹路径
-
-    fs.readdir(folderPath, { withFileTypes: true }, (err, items) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Failed to traverse folder' });
-        }
-
-        const result = items.map(item => {
-            return {
-                name: item.name,
-                isDirectory: item.isDirectory(),
-                fullPath: path.join(folderPath, item.name)
-            };
-        });
-
-        res.json(result);
-    });
-});
-
-// 获取文件信息
-app.get('/api/file/info', (req, res) => {
-    const filePath = req.query.path; // 文件路径
-
-    fs.stat(filePath, (err, stats) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Failed to get file info' });
-        }
-
-        const fileInfo = {
-            sizeInBytes: stats.size,
-            createdAt: stats.birthtime,
-            modifiedAt: stats.mtime
-        };
-
-        res.json(fileInfo);
-    });
-});
-
-
 
 // 中间件：捕获所有未匹配路由并转发至另一台主机
 app.use((req, res) => {
@@ -96,10 +55,7 @@ app.use((req, res) => {
 
 // 监听代理服务器的错误事件
 proxy.on('error', (err, req, res) => {
-  console.error('代理请求失败:', err);
-
-  // 返回自定义的错误响应给客户端
-  res.status(500).send('代理请求失败');
+  res.status(500).send('代理请求失败: '+err);
 });
 
 

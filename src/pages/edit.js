@@ -3,38 +3,92 @@ import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import axios  from 'axios';
+import ReactJson from 'react-json-view'
 
-function Edit() {
+export default function Edit({open='README.md',self={}, ...props}){
+  const [file, setFile] = useState(open);
+  const [value, setValue] = useState('');
+  const [message, setMessage] = useState('loading...');
+  const [viewStat, SetViewStat] = useState('init');
+  
+  self.file = file
+  self.setFile = setFile
+  self.message = message
+  self.setMessage = setMessage
+
+  self.load = () => {
+    axios.get('/api/open',{
+      params:{file}, 
+      responseType: 'text'
+    })
+    .then(response => {
+      setValue(response.data)
+      setMessage('')
+      SetViewStat('running')
+    })
+    .catch(error => {
+      setMessage(error.message)
+      SetViewStat('suspend')
+    });
+  }
+
+  self.save = () => {
+    // axios.put('/api/open?'+new URLSearchParams({file}),value, {
+    //   headers: { 'content-type': 'text/plain' },
+    //   responseType: 'text',
+    // })
+
+    // axios.put('/api/open?'+new URLSearchParams({file}),value, {
+    //   headers: { 'content-type': 'text/plain' },
+    //   responseType: 'text',
+    // })
+
+    axios.put('/api/open',value,{
+      params:{file}, 
+      headers: { 'content-type': 'text/plain' },
+      responseType: 'text'
+    })
+
+    .then(response => {
+      setMessage(response.data)
+    })
+    .catch(error => {
+      setMessage(error.message)
+    });
+  }
+
   const onChange = React.useCallback((value, viewUpdate) => {
-    console.log('value:', value);
+    // console.log('value:', value);
+    // extensions=[javascript({ jsx: true })]
+    setValue(value)
   }, []);
-
-  const [fileContent, setFileContent] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    axios.get('/api/file/read?path=package.json',{responseType: 'text'})
-      .then(response => {
-        //setFileContent(JSON.stringify(response.data, ' ', 2))
-        setFileContent(response.data)
-      })
-      .catch(error => {
-        setErrorMessage(error.message);
-      });
+    self.load()
+  }, [file]);
 
-
-  }, []);
-
-  return (
+  return (<>
+    <Tool self={self} />
     <CodeMirror
-      value={fileContent ||errorMessage || 'loading...' }
-      height="200px"
-      extensions={[javascript({ jsx: true })]}
+      value={value}
+      extensions={[]}
       onChange={onChange}
     />
-  );
+  </>);
 }
 
-export default Edit;
+function Tool({self, ...props}){
+  return (<div>
+    <div>
+      Edit <span style={{width: '50px'}}></span>
+      {self.message}
+    </div>
+    <div>
+      <span>{self.file}</span>
+      <button onClick={self.load}>Load</button>
+      <button onClick={self.save}>Save</button>
+    </div>
+  </div>)
+}
 
 
