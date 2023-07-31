@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
+import { EditorView } from "@codemirror/view";
 import axios from 'axios';
 import ReactJson from 'react-json-view'
 
@@ -58,11 +59,13 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
     self.load()
   }, [file]);
 
+
+
   return (<>
     <Tool self={self} message={message} />
     <CodeMirror
       value={value}
-      extensions={[]}
+      extensions={[EditorView.lineWrapping]}
       onChange={onChange}
     />
   </>);

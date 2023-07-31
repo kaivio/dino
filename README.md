@@ -75,6 +75,6 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
     ```
     npx docusaurus build && npx docusaurus start
     ```
-
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 现在，你可以在 Docusaurus 项目中使用 Tailwind CSS。在 `custom.css` 文件中添加自定义的 CSS 规则或覆盖默认值，并将其应用到你的页面和组件上。
 
