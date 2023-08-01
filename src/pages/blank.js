@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
 
 export default function Blank() {
   return (<>
@@ -22,5 +23,64 @@ export default function Blank() {
         Click me!
       </button>
     </div>
+
+    <div clclassNameass="flex">
+  <div className="w-1/4">
+    <div className="flex flex-col space-y-2">
+      <div>
+        <a href="#" className="bg-gray-200 px-4 py-2 rounded-md">Tab 1</a>
+      </div>
+      <div>
+        <a href="#" className="bg-gray-200 px-4 py-2 rounded-md">Tab 2</a>
+      </div>
+    </div>
+  </div>
+
+  <div className="w-3/4">
+    <div className="bg-white p-4 rounded-md">
+    tailwind 实现一个标签页react组件，标签栏位于顶部，只使用div和button元素
+    </div>
+  </div>
+</div>
+<Tabs />
   </>);
 }
+
+const Tabs = () => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  return (
+    <div className="flex flex-col">
+      <div className="flex mb-4">
+        <button
+          className={`px-4 py-2 rounded-tl-md rounded-tr-md ${
+            activeTab === 0 ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setActiveTab(0)}
+        >
+          Tab 1
+        </button>
+        <button
+          className={`px-4 py-2 ml-1 rounded-tl-md rounded-tr-md ${
+            activeTab === 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setActiveTab(1)}
+        >
+          Tab 2
+        </button>
+      </div>
+
+      <div className="p-4 bg-white rounded-bl-md rounded-br-md">
+        {activeTab === 0 && (
+           // 第一个标签页内容 
+           <div>Content for Tab 1</div>
+        )}
+
+        {activeTab === 1 && (
+           // 第二个标签页内容 
+           <div>Content for Tab 2</div>
+        )}
+      </div>
+    </div>
+  );
+};

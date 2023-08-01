@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from "@codemirror/view";
 import axios from 'axios';
 import ReactJson from 'react-json-view'
-import { duotoneLight, duotoneLightInit, duotoneDark, duotoneDarkInit } from '@uiw/codemirror-theme-duotone';
+import { duotoneLightInit, duotoneDarkInit } from '@uiw/codemirror-theme-duotone';
 
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
@@ -15,7 +14,7 @@ const themes = {
   dark: duotoneDarkInit
 }
 
-export default function Edit({ open = 'README.md', self = {}, ...props }) {
+function Edit({ open = 'README.md', self = {}, ...props }) {
   const [file, setFile] = useState(open);
   const [value, setValue] = useState('');
   const [message, setMessage] = useState('loading...');
@@ -96,31 +95,69 @@ export default function Edit({ open = 'README.md', self = {}, ...props }) {
   </>);
 }
 
+function EditPage(props){
+  const files = [
+    {
+      title: "File 1.js",
+      value: 'function greet() {\n  console.log("Hello, world!");\n}',
+      lang: "javascript"
+    },
+    {
+      title: "File 2.cpp",
+      value:
+        '#include <iostream>\n\nint main() {\n  std::cout << "Hello, world!" << std::endl;\n  return 0;\n}',
+      lang: "cpp"
+    },
+     {
+       title: "File 3.java",
+       value:
+         'public class HelloWorld {\n public static void main(String[] args) {\n System.out.println("Hello, world!"); \n}\t }',
+       lang: "java"
+     }
+  ];
 
-function EditGroup({}){
-  // 文件组: [{title, value, lang}]
-  // 当前活动视图: 0
-  // 视图切换事件
+  return (<>
+    <EditGroup files={files} />
+    <Edit />
+
+  </>)
+}
+
+function EditGroup({files}){
+  
+  const [tabTitles, setTabTitles] = useState(files.map((v, i)=> v.title))
+
+
+  const tabContents = files.map((v, i)=>(
+    <EditView key={i} 
+      value={v.value}  
+      lang={v.lang}  
+      onChange={(value, viewUpdate)=>{
+        v.value=value
+        tabTitles[i] = '*'+v.title
+        setTabTitles([...tabTitles])
+      }}
+    />
+  ))
   // 保存事件
   // 重新加载事件
-  //
+  // 生成3个表示源代码文件对象，数据结构是 [{title，value, lang}] 
   return (<>
-    <Tool self={self} message={message} />
-    <div>标签组</div>
-    <EditView />
+    <Tool self={self} />
+    <Tabs  titles={tabTitles} contents={tabContents} />
   </>)
 }
 
 
 
 // TODO: 参数支持：高度
-function EditView({value, lang, onChange, theme}){
+function EditView({value, lang, onChange, theme, ...props}){
   return (
     <CodeMirror
       value={value}
       extensions={[
         EditorView.lineWrapping, // 自动换行
-        loadLanguage(lang),
+        loadLanguage(lang)||loadLanguage('markdown'),
       ]}
       onChange={onChange}
       theme={themes[theme || 'light']({
@@ -128,6 +165,7 @@ function EditView({value, lang, onChange, theme}){
           fontFamily: 'var(--ifm-font-family-monospace)',
         }
       })}
+      {...props}
     />
   )
 }
@@ -149,3 +187,38 @@ function Button({onClick, children}){
   </>)
 }
 
+function Tabs({titles, contents}){
+  const [activeTab, setActiveTab] = useState(0)
+
+  return (<>
+    <div className="flex flex-col">
+      <div className="flex">
+        {titles.map((v,i)=>(
+          <button key={i}
+            className={"border-none "
+            + (activeTab == i ? "bg-slate-200" : "bg-transparent")
+            }
+            onClick={() => setActiveTab(i)}
+          >
+            
+            {v}
+          </button>
+        ))}
+      </div>
+    </div>
+    
+    <div className='flex'>
+      {contents.map((v, i) => (
+      <div className={"bg-white rounded-bl-md rounded-br-md "
+        + (activeTab == i ? 'w-full':'w-0')}  
+      >
+        {contents[i]}
+      </div>
+      ))}
+    </div>
+  </>)
+  
+}
+
+
+export default EditPage
