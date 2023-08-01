@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactJson from 'react-json-view'
-
 import { EditorView, basicSetup } from "codemirror"
-import { javascript } from "@codemirror/lang-javascript"
-import { html } from "@codemirror/lang-html"
-import { css } from "@codemirror/lang-css"
-import { markdown } from "@codemirror/lang-markdown"
-import { python } from "@codemirror/lang-python"
-import { json } from "@codemirror/lang-json"
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 import { duotoneLightInit, duotoneDarkInit } from '@uiw/codemirror-theme-duotone';
@@ -24,7 +16,7 @@ const theme = {
 }
 theme.use = theme.dark
 
-export default function EditView({ doc, lang, ...props }) {
+export default function EditView({content, lang, className, self={}, ...props }) {
   const id = Math.random()
   useEffect(() => {
     if (document.querySelector('html[data-theme=light]')) {
@@ -32,21 +24,20 @@ export default function EditView({ doc, lang, ...props }) {
 
     }
     let editor = new EditorView({
-      doc,
+      doc:content,
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
-        // rosePineDawn
-        // javascript({jsx: true}),
         theme.use,
-        loadLanguage(lang) || loadLanguage()
+        loadLanguage(lang) || loadLanguage('markdown')
       ],
       parent: document.getElementById(id),
     })
-
+    self.editor = editor
+    self.state = editor.state
+    console.log(editor.state);
   }, [])
   return (<>
-    <div id={id}></div>
-    {/* <ReactJson src={{rosePineDawn}} /> */}
+    <div id={id} className={className}></div>
   </>)
 }
