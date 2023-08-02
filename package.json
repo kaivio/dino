@@ -18,6 +18,8 @@
     "@docusaurus/preset-classic": "2.4.1",
     "@docusaurus/theme-live-codeblock": "^2.4.1",
     "@mdx-js/react": "^1.6.22",
+    "@uiw/codemirror-extensions-langs": "^4.21.9",
+    "@uiw/codemirror-theme-duotone": "^4.21.9",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "clsx": "^1.2.1",

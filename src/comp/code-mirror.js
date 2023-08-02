@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const cm_options = {
   tabSize: 2,
+  dragDrop: false,
   lineWrapping: true,
   lineNumbers: true,
   styleActiveLine: true,
@@ -9,6 +10,7 @@ const cm_options = {
    // theme:'3024-day' ,
   // theme:'3024-night' ,
   // theme:'gruvbox-dark',
+  readOnly:true 
 }
 
 export default function CodeMirrorcomponents({value='', mode, className, self={}, ...props }) {

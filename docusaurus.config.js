@@ -16,12 +16,12 @@ const config = {
   //   },
   // ],
   stylesheets: [
-    'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.css',
+    // 'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.css',
   ],
   scripts: [
-    'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.js',
-    'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/addon/selection/active-line.js',
-    'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/mode/javascript/javascript.js',
+    // 'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.js',
+    // 'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/addon/selection/active-line.js',
+    // 'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/mode/javascript/javascript.js',
   ],
   plugins: [
     '@docusaurus/theme-live-codeblock',

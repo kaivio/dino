@@ -43,10 +43,10 @@
   font-family: var(--ifm-font-family-monospace) !important;
 }
 
-.CodeMirror{
+.CodeMirror, .cm-editor{
   height: 100%;
   cursor: text;
-  box-shadow: none !important;
+  /* box-shadow: none !important; */
   font-family: var(--ifm-font-family-monospace) !important;
 
 }
@@ -55,5 +55,4 @@
   padding: 0;
 } */
 
-/* body { background: #000 !important; } */
 
