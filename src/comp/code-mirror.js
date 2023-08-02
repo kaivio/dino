@@ -6,6 +6,8 @@ const cm_options = {
   lineNumbers: true,
   styleActiveLine: true,
   theme:'solarized light' ,
+   // theme:'3024-day' ,
+  // theme:'3024-night' ,
   // theme:'gruvbox-dark',
 }
 
@@ -13,9 +15,9 @@ export default function CodeMirrorcomponents({value='', mode, className, self={}
   const id = Math.random()
   useEffect(() => {
     if (document.querySelector('html[data-theme=light]')) {
-      // 
+      //
     }
-    
+
     try{
       self.cm = CodeMirror(document.getElementById(id),{value, mode, ...cm_options} );
       self.doc = self.cm.doc
