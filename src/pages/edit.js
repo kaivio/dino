@@ -4,10 +4,6 @@ import CodeMirror from '@site/src/comp/cm6';
 
 
 export default function Blank() {
-  let doc = 'function greet() {\n  console.log("Hello, world!");\n}'
-  let lang = 'javascript'
-  const props = { doc, lang }
-
   const files = [
     {
       title: "File 1.js",
@@ -29,63 +25,159 @@ export default function Blank() {
   ];
 
 
-  //const [output,setOutpot] = useState('')
-  const buf1 = {}
-  const buf2 = {}
+  const ref = {}
+  function name(params) {
+    ref.tabnew({ title, doc, lang })
+    ref.get_editor().state.doc
+    ref.state.tabs[ref.state.active].wait_save = true
+    ref.setState([...ref.state])
+
+  }
+  useEffect(() => {
+    for (let f of files) {
+      ref.tabnew(f, { to: false })
+    }
+    ref.tabnew({ title: 'snippets/default.json', lang: 'json' }, { to: false })
+
+  }, [])
+
   return (<>
-    <CodeMirror {...props} self={buf1} className="h-48" />
-    <div className='flex p-4'>
-      <div className='grow'>读写测试</div>
-      <button onClick={() => {
-        // 读取编辑器的内容
-        let doc = buf1.editor.state.doc.toString()
+    {/* <EditGroup self={ref} files={files} /> */}
+    <EditTabs self={ref} />
 
-        let tab_size = 2
-        let text = doc.replace(new RegExp(`^ {${tab_size}}`, 'gm'), '\t')
-        let out = JSON.stringify({
-          body: text.split('\n'),
-          description: 'description'
-        }, ' ', 2)
+    <button onClick={() => {
 
-        //buf2.doc.setValue()
-        console.log(buf2.editor);
-        buf2.editor.dispatch({
-          changes: {
-            from: 0,
-            to: buf2.editor.state.doc.length,
-            insert: out
-          }
-        })
-      }}>生成 vs code 代码片段</button>
+      // 读取编辑器的内容
+      let doc = ref.get_editor().state.doc.toString()
+
+      let tab_size = 2
+      let text = doc.replace(new RegExp(`^ {${tab_size}}`, 'gm'), '\t')
+      let out = JSON.stringify({
+        body: text.split('\n'),
+        description: 'description'
+      }, ' ', 2)
+
+      // 写入编辑器的内容
+      const tab = 3
+      ref.get_editor(tab).dispatch({
+        changes: {
+          from: 0,
+          to: ref.get_editor(tab).state.doc.length,
+          insert: out
+        }
+      })
+      ref.tabnext(tab)
+
+    }}>生成 vs code 代码片段</button>
+  </>)
+}
+
+function EditTabs({ self }) {
+  [self.state, self.setState] = useState({
+    tabs: [],
+    active: 0
+  })
+
+  self.tabnew = (
+    { title = '[No Name]', doc = '', lang = 'markdown' },
+    { to = true, at = self.state.tabs.length } //  是否立即切换到新的标签页，标签插入位置
+  ) => {
+    self.state.tabs.splice(at, 0, {
+      title,
+      wait_save: false,
+      _cm: {},
+    })
+    self.state.tabs[at]._cm_component =
+      <CodeMirror
+        self={self.state.tabs[at]._cm}
+        doc={doc}
+        lang={lang}
+      // className={self.state.active == at ? 'block':'hidden'} 
+      />
+
+    if (to) {
+      self.state.active = at
+    }
+
+    self.flush()
+
+  }
+
+  self.get_editor = (n = self.state.active) =>
+    self.state.tabs[n]._cm.editor
+
+  self.tabnext = (n) => {
+    if (typeof n != 'number') {
+      n = self.state.active + 1
+    }
+    n = n < self.state.tabs.length ? n : 0
+    self.state.active = n
+    self.flush()
+  }
+
+  self.flush = () =>  self.setState({ ...self.state })
+
+  return (<>
+    {/* 标签栏 */}
+    <div className="flex flex-col overflow-hidden h-96">
+      <div className="flex">
+        {self.state.tabs.map((v, i) => (
+          <button key={i}
+            className={"border-none "
+              + (self.state.active == i ? "bg-slate-200" : "bg-transparent")
+            }
+            onClick={() => {
+              self.state.active = i
+              self.setState({ ...self.state })
+            }}
+          >
+            {v.title}
+          </button>
+        ))}
+      </div>
+      {/* 编辑视图 */}
+      {self.state.tabs.map((v, i) => <div
+        className={'grow overflow-y-auto ' + (self.state.active == i ? 'block' : 'hidden')}>
+        {v._cm_component}
+      </div>)}
     </div>
-    <CodeMirror doc='{}' lang='json' self={buf2} />
 
-    <h3 className='m-6'>标签页 demo </h3>
-    <EditGroup files={files} />
-    <hr className='m-12' />
+
   </>)
 }
 
 
+function EditGroup({ self = {}, files }) {
+
+  //const [tabTitles, setTabTitles] = useState(files.map((v, i) => v.title))
 
 
-function EditGroup({ files }) {
+  const tabTitles = []
+  const tabContents = []
+  const editors = []
 
-  const [tabTitles, setTabTitles] = useState(files.map((v, i) => v.title))
+  for (const i in files) {
+
+    let f = files[i];
+    tabTitles.push(
+      <div>f.title</div>
+    )
+    tabContents.push(
+      <CodeMirror key={i}
+        doc={v.doc}
+        lang={v.lang}
+        onChange={(value, viewUpdate) => {
+          // 标记未保存
+          v.value = value
+          tabTitles[i] = '*' + v.title
+          setTabTitles([...tabTitles])
+        }}
+      />
+    )
+
+  }
 
 
-  const tabContents = files.map((v, i) => (
-    <CodeMirror key={i}
-      doc={v.doc}
-      lang={v.lang}
-      onChange={(value, viewUpdate) => {
-        // 标记未保存
-        v.value = value
-        tabTitles[i] = '*' + v.title
-        setTabTitles([...tabTitles])
-      }}
-    />
-  ))
   // 保存事件
   // 重新加载事件
   // 生成3个表示源代码文件对象，数据结构是 [{title，value, lang}] 
@@ -96,8 +188,8 @@ function EditGroup({ files }) {
 
 
 
-function Tabs({ titles, contents , contentClass , contentStyle}) {
-  const [activeTab, setActiveTab] = useState(0)
+function Tabs({ self = {}, titles, contents, contentClass, contentStyle }) {
+  [self.activeTab, self.setActiveTab] = useState(0)
 
   return (<>
     <div className="flex flex-col">
@@ -105,9 +197,9 @@ function Tabs({ titles, contents , contentClass , contentStyle}) {
         {titles.map((v, i) => (
           <button key={i}
             className={"border-none "
-              + (activeTab == i ? "bg-slate-200" : "bg-transparent")
+              + (self.activeTab == i ? "bg-slate-200" : "bg-transparent")
             }
-            onClick={() => setActiveTab(i)}
+            onClick={() => self.setActiveTab(i)}
           >
 
             {v}
@@ -117,8 +209,8 @@ function Tabs({ titles, contents , contentClass , contentStyle}) {
     </div>
 
     {contents.map((v, i) => (
-      <div key={i} className={(contentClass) +" "
-        + (activeTab == i ? 'block' : 'hidden')}
+      <div key={i} className={(contentClass) + " "
+        + (self.activeTab == i ? 'block' : 'hidden')}
         style={contentStyle}
       >
         {contents[i]}
