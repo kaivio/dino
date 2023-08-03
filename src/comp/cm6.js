@@ -111,7 +111,7 @@ export function EditTabs({ self }) {
         }}>
           {self.state.tabs.map((v, i) => (
             // 标签项目
-            <button key={i} className='flex px-4 '
+            <div key={i} className='flex px-4 '
               style={self.state.active == i ?
                 { background: 'var(--editor-ui-bg)' } :
                 {}
@@ -125,7 +125,7 @@ export function EditTabs({ self }) {
               <div className='w-4 text-right'>
                 {self.state.tabs[i].wait_save && '*'}
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -146,27 +146,27 @@ function Tool({ title = 'Editor', }) {
     color: 'var(--editor-ui-fg)'
   }}>
     <div >
-      {/* <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({width:18,height:18})}</Icon> */}
-      <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({width:18,height:18})}</Icon>
+      {/* <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon> */}
     </div>
     <h3 className='grow h-min'></h3>
-    <div className='space-x-2'>
+    <div className='space-x-2 flex'>
       <Icon alt='Save'>{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
       <Icon alt='Save'>{feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}</Icon>
       <Icon alt='Save'>{feather.icons['file'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Save'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
     </div>
 
   </div>)
 }
 
 function Icon({ alt, onClick, children, ...props }) {
-  return (<button
+  return (<div
     alt={alt}
     onAuxClick={onClick}
     className='icon-button'
     dangerouslySetInnerHTML={{ __html: children }}
     {...props}
-  ></button>)
+  ></div>)
 
 }

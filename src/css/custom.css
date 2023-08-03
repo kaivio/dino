@@ -5,7 +5,8 @@
  */
 
 /* You can override the default Infima variables here. */
-@import 'tailwindcss/base';
+
+/* @import 'tailwindcss/base'; */
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 /* @import 'https://cdn.jsdelivr.net/npm/codemirror@5.65.14/theme/solarized.css'; */
@@ -64,6 +65,7 @@ code,
 .icon-button {
   padding: 8px;
   border-radius: 50%;
+  font-size: 0;
 }
 
 .icon-button:hover {
@@ -71,5 +73,6 @@ code,
   background: color-mix(in hsl, hsla(0, 100%, 100%, 0), currentColor);
   background: hsla(0, 0%, 40%, 0.1)
 }
+
 
 
