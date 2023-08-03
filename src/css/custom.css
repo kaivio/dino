@@ -62,10 +62,15 @@ code,
   padding: 0;
 } */
 
+.bottom {
+  cursor: pointer;
+}
+
 .icon-button {
   padding: 8px;
   border-radius: 50%;
   font-size: 0;
+  cursor: pointer;
 }
 
 .icon-button:hover {

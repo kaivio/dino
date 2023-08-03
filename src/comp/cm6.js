@@ -111,7 +111,7 @@ export function EditTabs({ self }) {
         }}>
           {self.state.tabs.map((v, i) => (
             // 标签项目
-            <div key={i} className='flex px-4 '
+            <div key={i} className='flex px-4 bottom'
               style={self.state.active == i ?
                 { background: 'var(--editor-ui-bg)' } :
                 {}
@@ -149,7 +149,7 @@ function Tool({ title = 'Editor', }) {
       <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({width:18,height:18})}</Icon>
       {/* <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon> */}
     </div>
-    <h3 className='grow h-min'></h3>
+    <h5 className='grow m-0'>{title}</h5>
     <div className='space-x-2 flex'>
       <Icon alt='Save'>{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
       <Icon alt='Save'>{feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}</Icon>
