@@ -140,21 +140,25 @@ export function EditTabs({ self }) {
   </>)
 }
 
-function Tool({ title = 'Editor', }) {
+function Tool({ title = 'Edit', }) {
   return (<div className='flex p-2 items-center' style={{
     background: 'var(--editor-ui-se)',
     color: 'var(--editor-ui-fg)'
   }}>
-    <div >
+    <div>
       <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({width:18,height:18})}</Icon>
       {/* <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon> */}
     </div>
     <h5 className='grow m-0'>{title}</h5>
     <div className='space-x-2 flex'>
-      <Icon alt='Save'>{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Save'>{feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Redo'>{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Undo'
+        onClick={()=>{
+          // TODO: 撤销事件处理
+        }}
+      >{feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}</Icon>
       <Icon alt='Save'>{feather.icons['file'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Save'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Play'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
     </div>
 
   </div>)
