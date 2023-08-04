@@ -1,31 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { EditorView, basicSetup } from "codemirror"
 import feather from 'feather-icons';
+
+import { EditorView, basicSetup } from "codemirror"
+import { EditorSelection } from "@codemirror/state"
+
+import * as commands from "@codemirror/commands"
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 import { duotoneLightInit, duotoneDarkInit, defaultSettingsDuotoneLight, defaultSettingsDuotoneDark } from '@uiw/codemirror-theme-duotone';
 
-const themeOptions = {
+export const theme = {}
+theme.lightOption = {
   settings: {
+    ...defaultSettingsDuotoneLight,
     fontFamily: 'var(--ifm-font-family-monospace)',
+    lineHighlight: '#e3dcce50', // active line 的背景位于 selection 上层
+  }
+}
+theme.darkOption = {
+  settings: {
+    ...defaultSettingsDuotoneDark,
+    fontFamily: 'var(--ifm-font-family-monospace)',
+    foreground: '#b5ace1',
+    selection: '#3c335b',
+    lineHighlight: '#ffffff0f', // active line 的背景位于 selection 上层
+    
   }
 }
 
-export const theme = {
-  light: duotoneLightInit(themeOptions),
-  dark: duotoneDarkInit(themeOptions),
-  lightSetting: defaultSettingsDuotoneLight,
-  darkSetting: defaultSettingsDuotoneDark
-}
+theme.light = duotoneLightInit(theme.lightOption)
+theme.dark = duotoneDarkInit(theme.darkOption)
+
 theme.use = theme.dark
-theme.useSetting = theme.darkSetting
+theme.useSetting = theme.darkOption.settings
 
 export default function CodeMirror({ doc, lang, className, self = {}, style_back_id, ...props }) {
   const id = Math.random()
   useEffect(() => {
     if (document.querySelector('html[data-theme=light]')) {
       theme.use = theme.light
-      theme.useSetting = theme.lightSetting
+      theme.useSetting = theme.lightOption.settings
     }
     const ui = document.getElementById(style_back_id || 'editor-ui')
     if (ui) ui.style = `
@@ -41,6 +55,7 @@ export default function CodeMirror({ doc, lang, className, self = {}, style_back
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
+        commands.history(),
         theme.use,
         loadLanguage(lang) || loadLanguage('markdown')
       ],
@@ -75,7 +90,6 @@ export function EditTabs({ self }) {
         self={self.state.tabs[at]._cm}
         doc={doc}
         lang={lang}
-      // className={self.state.active == at ? 'block':'hidden'} 
       />
 
     if (to) {
@@ -102,7 +116,7 @@ export function EditTabs({ self }) {
 
   return (<>
     <div id='editor-ui' className="flex flex-col  h-96 " >
-      {true && <Tool />}
+      {true && <Tool self={self} />}
       {/* 标签栏 ( 多套层div防止overflow混乱 )*/}
       <div>
         <div className="flex overflow-auto  border-current" style={{
@@ -140,25 +154,31 @@ export function EditTabs({ self }) {
   </>)
 }
 
-function Tool({ title = 'Edit', }) {
+function Tool({ title = 'Edit', self }) {
   return (<div className='flex p-2 items-center' style={{
     background: 'var(--editor-ui-se)',
     color: 'var(--editor-ui-fg)'
   }}>
     <div>
-      <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({width:18,height:18})}</Icon>
+      <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}</Icon>
       {/* <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon> */}
     </div>
     <h5 className='grow m-0'>{title}</h5>
     <div className='space-x-2 flex'>
-      <Icon alt='Redo'>{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Undo'
-        onClick={()=>{
-          // TODO: 撤销事件处理
+      <Icon alt='Redo'
+        onClick={() => {
+          commands.redo(self.get_editor())
         }}
-      >{feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Save'>{feather.icons['file'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Play'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
+      >{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Undo'
+        onClick={() => {
+          commands.undo(self.get_editor())
+        }}
+      >
+        {feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}
+      </Icon>
+      <Icon alt='Save'>{feather.icons['save'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Run'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
     </div>
 
   </div>)
@@ -167,7 +187,7 @@ function Tool({ title = 'Edit', }) {
 function Icon({ alt, onClick, children, ...props }) {
   return (<div
     alt={alt}
-    onAuxClick={onClick}
+    onClick={onClick}
     className='icon-button'
     dangerouslySetInnerHTML={{ __html: children }}
     {...props}

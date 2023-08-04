@@ -65,6 +65,7 @@ code,
 
 .bottom {
   cursor: pointer;
+  user-select: none;
 }
 
 .icon-button {
@@ -72,13 +73,17 @@ code,
   border-radius: 50%;
   font-size: 0;
   cursor: pointer;
+  user-select: none;
 }
 
 .icon-button:hover {
-  /* background: color-mix(in srgb,  #00000000,currentColor); */
-  background: color-mix(in hsl, hsla(0, 100%, 100%, 0), currentColor);
-  background: hsla(0, 0%, 40%, 0.1)
+  background: color-mix(in srgb, #000000 0%, currentColor 12.5%);
 }
+
+.icon-button:active {
+  background: color-mix(in srgb, #000000 0%, currentColor 25%);
+}
+
 
 
 
