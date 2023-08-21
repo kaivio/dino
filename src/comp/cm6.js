@@ -5,58 +5,25 @@ import { EditorView, basicSetup } from "codemirror"
 import { EditorSelection } from "@codemirror/state"
 
 import * as commands from "@codemirror/commands"
+import cm_theme from "@site/src/codemirror-colors"
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 import { duotoneLightInit, duotoneDarkInit, defaultSettingsDuotoneLight, defaultSettingsDuotoneDark } from '@uiw/codemirror-theme-duotone';
 
-export const theme = {}
-theme.lightOption = {
-  settings: {
-    ...defaultSettingsDuotoneLight,
-    fontFamily: 'var(--ifm-font-family-monospace)',
-    lineHighlight: '#e3dcce50', // active line 的背景位于 selection 上层
-  }
-}
-theme.darkOption = {
-  settings: {
-    ...defaultSettingsDuotoneDark,
-    fontFamily: 'var(--ifm-font-family-monospace)',
-    foreground: '#b5ace1',
-    selection: '#3c335b',
-    lineHighlight: '#ffffff0f', // active line 的背景位于 selection 上层
-    
-  }
-}
-
-theme.light = duotoneLightInit(theme.lightOption)
-theme.dark = duotoneDarkInit(theme.darkOption)
-
-theme.use = theme.dark
-theme.useSetting = theme.darkOption.settings
 
 export default function CodeMirror({ doc, lang, className, self = {}, style_back_id, ...props }) {
   const id = Math.random()
   useEffect(() => {
-    if (document.querySelector('html[data-theme=light]')) {
-      theme.use = theme.light
-      theme.useSetting = theme.lightOption.settings
-    }
-    const ui = document.getElementById(style_back_id || 'editor-ui')
-    if (ui) ui.style = `
-      --editor-ui-bg:${theme.useSetting.background};
-      --editor-ui-fg:${theme.useSetting.foreground};
-      --editor-ui-lh:${theme.useSetting.lineHighlight};
-      --editor-ui-se:${theme.useSetting.selection};
-      --editor-ui-cr:${theme.useSetting.caret};
-    `
-
     let editor = new EditorView({
       doc: doc,
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
         commands.history(),
-        theme.use,
+        // theme.use,
+        // cm_theme.light,
+        cm_theme(),
+
         loadLanguage(lang) || loadLanguage('markdown')
       ],
       parent: document.getElementById(id),
@@ -70,7 +37,7 @@ export default function CodeMirror({ doc, lang, className, self = {}, style_back
 
 
 
-export function EditTabs({ self }) {
+export function EditTabs({ onRun, onSave, self }) {
   [self.state, self.setState] = useState({
     tabs: [],
     active: 0
@@ -115,21 +82,16 @@ export function EditTabs({ self }) {
   self.flush = () => self.setState({ ...self.state })
 
   return (<>
-    <div id='editor-ui' className="flex flex-col  h-96 " >
-      {true && <Tool self={self} />}
+    <div id='editor-ui' className="editor-ui flex flex-col  h-96 " >
+      {true && <Tool onRun={onRun} onSave={onSave} self={self} />}
       {/* 标签栏 ( 多套层div防止overflow混乱 )*/}
       <div>
-        <div className="flex overflow-auto  border-current" style={{
-          background: 'var(--editor-ui-se)',
-          color: 'var(--editor-ui-fg)'
-        }}>
+        <div className="editor-tabs flex overflow-auto  border-current" >
           {self.state.tabs.map((v, i) => (
             // 标签项目
-            <div key={i} className='flex px-4 bottom'
-              style={self.state.active == i ?
-                { background: 'var(--editor-ui-bg)' } :
-                {}
-              }
+            <div key={i} className={'flex px-4 btn '
+              + (self.state.active == i ? 'active ' : '')
+            }
               onClick={() => {
                 self.state.active = i
                 self.setState({ ...self.state })
@@ -154,16 +116,21 @@ export function EditTabs({ self }) {
   </>)
 }
 
-function Tool({ title = 'Edit', self }) {
-  return (<div className='flex p-2 items-center' style={{
-    background: 'var(--editor-ui-se)',
-    color: 'var(--editor-ui-fg)'
-  }}>
-    <div>
-      <Icon alt='Save'>{feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}</Icon>
-      {/* <Icon alt='Save'>{feather.icons['edit-3'].toSvg({ width: 18, height: 18 })}</Icon> */}
+function Tool({ title = 'Edit', onSave, onRun, self }) {
+  return (<div className='flex p-2 items-center'>
+
+    <div className='relative [&>.editor-popup]:hidden [&:hover>.editor-popup]:block'>
+      <div className=''>
+        <Icon alt='Menu'>
+          {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
+        </Icon>
+      </div>
+      <div className='editor-popup absolute mt-2 z-50 min-w-[100px]'>
+        <div className='btn px-4 py-2 w-full text-left'>Quit</div>
+      </div>
     </div>
     <h5 className='grow m-0'>{title}</h5>
+
     <div className='space-x-2 flex'>
       <Icon alt='Redo'
         onClick={() => {
@@ -177,8 +144,12 @@ function Tool({ title = 'Edit', self }) {
       >
         {feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}
       </Icon>
-      <Icon alt='Save'>{feather.icons['save'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Run'>{feather.icons['play'].toSvg({ width: 18, height: 18 })}</Icon>
+      <Icon alt='Save' onClick={onSave} >
+        {feather.icons['save'].toSvg({ width: 18, height: 18 })}
+      </Icon>
+      <Icon alt='Run' onClick={onRun}>
+        {feather.icons['play'].toSvg({ width: 18, height: 18 })}
+      </Icon>
     </div>
 
   </div>)
@@ -188,7 +159,7 @@ function Icon({ alt, onClick, children, ...props }) {
   return (<div
     alt={alt}
     onClick={onClick}
-    className='icon-button'
+    className='ibtn'
     dangerouslySetInnerHTML={{ __html: children }}
     {...props}
   ></div>)
