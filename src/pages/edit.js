@@ -155,6 +155,12 @@ int main() {
           }
         })
         ref.tabnext(tab)
+        
+        ref.setMessage('ok')
+        setTimeout(()=>ref.setMessage('---------'), 1000)
+        setTimeout(()=>ref.setMessage('2222222222'), 2000)
+        setTimeout(()=>ref.setMessage('3333333333'), 4000)
+        setTimeout(()=>ref.setMessage('4444444444'), 6000)
 
       }}
 

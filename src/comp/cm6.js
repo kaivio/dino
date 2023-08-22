@@ -117,19 +117,28 @@ export function EditTabs({ onRun, onSave, self }) {
 }
 
 function Tool({ title = 'Edit', onSave, onRun, self }) {
+  const [message,setMessage] = useState('')
+  self.setMessage = setMessage
+
+  let [timeid,setTimeid] = useState(null)
+  useEffect(()=>{
+    clearTimeout(timeid)
+    timeid = setTimeout(()=>setMessage(''), 4000)
+    setTimeid(timeid)
+  },[message])
+
   return (<div className='flex p-2 items-center'>
 
-    <div className='relative [&>.editor-popup]:hidden [&:hover>.editor-popup]:block'>
-      <div className=''>
-        <Icon alt='Menu'>
-          {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
-        </Icon>
-      </div>
+    <div tabindex='0' className='relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
+      <Icon alt='Menu' >
+        {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
+      </Icon>
       <div className='editor-popup absolute mt-2 z-50 min-w-[100px]'>
+        <div className='btn px-4 py-2 w-full text-left'>Help</div>
         <div className='btn px-4 py-2 w-full text-left'>Quit</div>
       </div>
     </div>
-    <h5 className='grow m-0'>{title}</h5>
+    <h5 className='grow m-0'>{message || title}</h5>
 
     <div className='space-x-2 flex'>
       <Icon alt='Redo'
@@ -155,11 +164,9 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
   </div>)
 }
 
-function Icon({ alt, onClick, children, ...props }) {
+function Icon({ className, children, ...props }) {
   return (<div
-    alt={alt}
-    onClick={onClick}
-    className='ibtn'
+    className={'ibtn ' + className}
     dangerouslySetInnerHTML={{ __html: children }}
     {...props}
   ></div>)
