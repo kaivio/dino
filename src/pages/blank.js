@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import Layout from '@site/src/comp/layout'
+import CodeBlock from '@theme/CodeBlock';
 
+ function MyReactPage() {
+  return (
+    <div>
+      <CodeBlock
+        language="jsx"
+        title="/src/components/HelloCodeTitle.js"
+        showLineNumbers>
+        {`function HelloCodeTitle(props) {
+  return <h1>Hello, {props.name}</h1>;
+}`}
+      </CodeBlock>
+    </div>
+  );
+}
 
 export default function Blank() {
-  return (<>
+  return (<Layout>
     <div className='bg-emerald-100'
       style={{
         display: 'flex',
@@ -23,7 +39,7 @@ export default function Blank() {
         Click me!
       </button>
     </div>
-
+    <MyReactPage />
     <div clclassNameass="flex">
   <div className="w-1/4">
     <div className="flex flex-col space-y-2">
@@ -43,7 +59,7 @@ export default function Blank() {
   </div>
 </div>
 <Tabs />
-  </>);
+  </Layout>);
 }
 
 const Tabs = () => {
