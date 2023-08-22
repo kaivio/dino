@@ -128,8 +128,7 @@ int main() {
 
   }, [])
 
-  return (<>
-    {/* <EditGroup self={ref} files={files} /> */}
+  return (<div className='h-[100vh]'>
     <EditTabs self={ref}
       onSave={() => {
         console.log('save');
@@ -155,20 +154,8 @@ int main() {
           }
         })
         ref.tabnext(tab)
-        
-        ref.setMessage('ok')
-        setTimeout(()=>ref.setMessage('---------'), 1000)
-        setTimeout(()=>ref.setMessage('2222222222'), 2000)
-        setTimeout(()=>ref.setMessage('3333333333'), 4000)
-        setTimeout(()=>ref.setMessage('4444444444'), 6000)
-
       }}
 
     />
-
-    {/* <button onClick={() => {
-
-
-    }}>生成 vs code 代码片段</button> */}
-  </>)
+  </div>)
 }

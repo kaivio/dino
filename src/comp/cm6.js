@@ -11,7 +11,7 @@ import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs
 import { duotoneLightInit, duotoneDarkInit, defaultSettingsDuotoneLight, defaultSettingsDuotoneDark } from '@uiw/codemirror-theme-duotone';
 
 
-export default function CodeMirror({ doc, lang, className, self = {}, style_back_id, ...props }) {
+export default function CodeMirror({ doc, lang, className, self = {}, ...props }) {
   const id = Math.random()
   useEffect(() => {
     let editor = new EditorView({
@@ -20,8 +20,6 @@ export default function CodeMirror({ doc, lang, className, self = {}, style_back
         basicSetup,
         EditorView.lineWrapping,
         commands.history(),
-        // theme.use,
-        // cm_theme.light,
         cm_theme(),
 
         loadLanguage(lang) || loadLanguage('markdown')
@@ -37,7 +35,7 @@ export default function CodeMirror({ doc, lang, className, self = {}, style_back
 
 
 
-export function EditTabs({ onRun, onSave, self }) {
+export function EditTabs({ onRun, onSave, noTool, self }) {
   [self.state, self.setState] = useState({
     tabs: [],
     active: 0
@@ -82,7 +80,7 @@ export function EditTabs({ onRun, onSave, self }) {
   self.flush = () => self.setState({ ...self.state })
 
   return (<>
-    <div id='editor-ui' className="editor-ui flex flex-col  h-96 " >
+    <div id='editor-ui' className="editor-ui flex flex-col h-full " >
       {true && <Tool onRun={onRun} onSave={onSave} self={self} />}
       {/* 标签栏 ( 多套层div防止overflow混乱 )*/}
       <div>
