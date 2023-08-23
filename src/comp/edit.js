@@ -6,29 +6,34 @@ import { EditorView, basicSetup } from "codemirror"
 import { EditorSelection } from "@codemirror/state"
 
 import * as commands from "@codemirror/commands"
-import cm_theme from "@site/src/codemirror-colors"
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
+
+import theme from "../lib/codemirror-theme"
+import {recognizeLang} from '../lib/langs-extname'
 
 export default function Edit({ className, self = {}, ...props }) {
   const [active, setActive] = useState(0)
   const [tabLabels, setTabLabels] = useState([])
 
-  const ref = useRef({ views: [] })
+  const ref = useRef({})
   useEffect(() => {
     self.current = ref.current
     const current = self.current
 
     current.tabs = []
 
-    current.flush = (newState = {}) => {
-      flushSync(() =>
-        setState((state) => { return { ...state, ...newState } })
-      )
-    }
+    // current.flush = (newState = {}) => {
+    //   flushSync(() =>
+    //     setState((state) => { return { ...state, ...newState } })
+    //   )
+    // }
 
     current.tabnew = ({ name = '', lang = 'textile', doc = '' } = {}, at = -1) => {
       // 添加一个 TabLabel
+      console.log(lang);
+      console.log(loadLanguage(lang));
+
       const id = makeid()
       setTabLabels((labels) => {
         return [...labels, {
@@ -46,8 +51,8 @@ export default function Edit({ className, self = {}, ...props }) {
         extensions: [
           basicSetup,
           EditorView.lineWrapping,
-          cm_theme(),
-          loadLanguage(lang) || loadLanguage('textile')
+          theme(),
+          loadLanguage(recognizeLang(lang)) || loadLanguage('textile')
         ],
         parent: dom_tab,
       })
@@ -183,7 +188,7 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
 
   return (<div className='flex p-2 items-center'>
 
-    <div tabindex='0' className='relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
+    <div tabIndex='0' className='relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
       <Icon alt='Menu' >
         {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
       </Icon>
@@ -204,7 +209,7 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
 
         ].map(({ text, click }, i) => (
           <div key={i}
-            className='btn px-4 py-2 w-full text-left'
+            className='btn px-4 py-2 w-full text-left whitespace-nowrap '
             onClick={click}>
             {text}
           </div>
@@ -256,3 +261,4 @@ function Icon({ className, children, ...props }) {
 
 
 const makeid = function () { let i = 0; return () => 'SEQ_ID_' + i++ }()
+

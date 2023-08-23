@@ -41,7 +41,7 @@ export default function Blank() {
         {location.search}<br />
         {location.hash}<br />
         <button onClick={()=>{
-          history.push('/edit-root#f=README.md&f=static/test.sh')
+          history.push('/edit-root#f=README.md&f=static/test.sh&f=static/test.java')
         }}>router test</button>
       </p>
     </div>

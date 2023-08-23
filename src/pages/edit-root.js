@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import CodeMirror, { EditTabs } from '@site/src/comp/cm6';
+import axios from 'axios';
+import React, { useState, useEffect, useRef } from 'react';
 import * as router from '@docusaurus/router';
 import Layout from '@site/src/comp/layout'
 
-import axios from 'axios';
+import Edit from '@site/src/comp/edit';
 
 
 export default function EditorPage() {
@@ -13,9 +13,10 @@ export default function EditorPage() {
     console.log(e)
   })
 
-  const ref = {}
+  const ref = useRef({})
 
   useEffect(() => {
+    const current = ref.current
     let hash = location.hash
     let params = new URLSearchParams(hash.substring(1))
 
@@ -26,31 +27,33 @@ export default function EditorPage() {
       doc += `${k} - ${v}\n`
       if (k == 'f') {
         files.push({
-          title: v,
+          name: v,
           lang: v.split('.').pop(),
           doc: ''
         })
       }
     })
+
     Promise.all(files.map((f, i) =>
-      axios.get('/api/open?file=' + f.title)
+      axios.get('/api/open?file=' + f.name)
         .then((res) => {
           f.doc = res.data
         })
         .catch((err) => {
-          ref.setMessage(err + '')
+          current.setMessage(err + '')
         })
     )).then(()=>{
-      files.map((f, i) => ref.tabnew(f))
-      ref.tabclose(0)
+      files.map((f, i) => current.tabnew(f))
+      current.tabclose(0)
     })
 
-    ref.tabnew({ title: 'LOADING', doc })
+    current.tabnew({ name: 'LOADING', doc })
+    current.tabnext(0)
   }, [])
 
   return (<Layout title="Edit ">
     <div className='h-[100vh]'>
-      <EditTabs self={ref}
+      <Edit self={ref}
         onSave={() => {
           console.log('save');
         }}
