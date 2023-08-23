@@ -10,7 +10,7 @@ import * as commands from "@codemirror/commands"
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 
 import theme from "../lib/codemirror-theme"
-import {recognizeLang} from '../lib/langs-extname'
+import { recognizeLang } from '../lib/langs-extname'
 
 export default function Edit({ className, self = {}, ...props }) {
   const [active, setActive] = useState(0)
@@ -105,8 +105,8 @@ export default function Edit({ className, self = {}, ...props }) {
           tab.editor = undefined
           tab.dom.parentNode.removeChild(tab.dom)
 
-          current.tabnext(n == labels.length ? n-1 : n)
-          
+          current.tabnext(n == labels.length ? n - 1 : n)
+
         })
 
         return [...labels]
@@ -186,37 +186,53 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
     timeid.current = setTimeout(() => setMessage(''), 4000)
   }, [message])
 
+  const menu_content = [
+    {
+      text: 'NEW', click: () => {
+        self.current.tabnew({
+        })
+        self.current.tabnext(self.current.state.tabLabels.length)
+      }
+    },
+    {
+      text: 'CLOSE', click: () => {
+        self.current.tabclose()
+      }
+    },
+    {
+      text: 'CLOSE OTHER', click: () => {
+        self.current.tabclose()
+      }
+    },
+    {
+      text: '--',
+    },
+    {
+      text: 'HELP', click: () => {
+        //
+      }
+    },
+  ]
+
   return (<div className='flex p-2 items-center'>
 
-    <div tabIndex='0' className='relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
+    <button id="menu-label" className='no-btn relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
       <Icon alt='Menu' >
         {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
       </Icon>
-      <div className='editor-popup absolute mt-2 z-50 min-w-[100px]'>
-        {[
-          {
-            text: 'Tab new', click: () => {
-              self.current.tabnew({
-              })
-              self.current.tabnext(self.current.state.tabLabels.length)
-            }
-          },
-          {
-            text: 'Tab close', click: () => {
-              self.current.tabclose()
-            }
-          },
-
-        ].map(({ text, click }, i) => (
-          <div key={i}
-            className='btn px-4 py-2 w-full text-left whitespace-nowrap '
-            onClick={click}>
-            {text}
-          </div>
-        ))}
+      <div className='editor-popup absolute z-50 min-w-[100px]'>
+        {menu_content.map(({ text, click }, i) => text == '--' ?
+          <div style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
+            <div key={i}
+              className='btn px-4 py-2 w-full text-left whitespace-nowrap '
+              onClick={click}>
+              {text}
+            </div>
+          ))}
       </div>
-    </div>
-    <h5 className='grow m-0'>{message || title}</h5>
+    </button>
+    {/* <input id='xxx' type='button' value='xxx' className='focus:bg-red-500'></input> */}
+    <label for='menu-label' className='grow m-0'>{message || title}</label>
 
     <div className='space-x-2 flex'>
       <Icon alt='Redo'
