@@ -113,7 +113,7 @@ int main() {
 
 
   const ref = {}
-  function name(params) {
+  function ref_using() {
     ref.tabnew({ title, doc, lang })
     ref.get_editor().state.doc
     ref.state.tabs[ref.state.active].wait_save = true

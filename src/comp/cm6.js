@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import feather from 'feather-icons';
 
 import { EditorView, basicSetup } from "codemirror"
@@ -8,7 +9,6 @@ import * as commands from "@codemirror/commands"
 import cm_theme from "@site/src/codemirror-colors"
 
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
-import { duotoneLightInit, duotoneDarkInit, defaultSettingsDuotoneLight, defaultSettingsDuotoneDark } from '@uiw/codemirror-theme-duotone';
 
 
 export default function CodeMirror({ doc, lang, className, self = {}, ...props }) {
@@ -27,6 +27,10 @@ export default function CodeMirror({ doc, lang, className, self = {}, ...props }
       parent: document.getElementById(id),
     })
     self.editor = editor
+    return () => {
+      editor = undefined
+      delete self.editor
+    }
   }, [])
   return (<>
     <div id={id} className={"CodeMirror " + className}></div>
@@ -42,9 +46,11 @@ export function EditTabs({ onRun, onSave, noTool, self }) {
   })
 
   self.tabnew = (
-    { title = '[No Name]', doc = '', lang = 'markdown' },
-    { to = true, at = self.state.tabs.length } //  是否立即切换到新的标签页，标签插入位置
+    { title = '', doc = '', lang = 'markdown' } = {},
+    options = { to: true, at: self.state.tabs.length } //  是否立即切换到新的标签页，标签插入位置
   ) => {
+    let { to, at } = { to: true, at: self.state.tabs.length, ...options }
+
     self.state.tabs.splice(at, 0, {
       title,
       wait_save: false,
@@ -62,6 +68,11 @@ export function EditTabs({ onRun, onSave, noTool, self }) {
     }
 
     self.flush()
+    setTimeout(()=>{
+try{
+      self.state.tabs[at]._cm.editor.focus()
+}catch(e){}
+    },300)
 
   }
 
@@ -77,7 +88,20 @@ export function EditTabs({ onRun, onSave, noTool, self }) {
     self.flush()
   }
 
-  self.flush = () => self.setState({ ...self.state })
+  self.tabclose = (n = self.state.active) => {
+    console.log('close: ' + n);
+    console.log(self.state.tabs);
+    self.state.tabs.splice(n, 1)
+    self.tabnext()
+    console.log(self.state.tabs);
+    self.flush()
+  }
+
+  self.flush = () => flushSync(() => {
+    self.setState({ ...self.state },()=>{
+      console.log('callback');
+    })
+  });
 
   return (<>
     <div id='editor-ui' className="editor-ui flex flex-col h-full " >
@@ -95,7 +119,7 @@ export function EditTabs({ onRun, onSave, noTool, self }) {
                 self.setState({ ...self.state })
               }}
             >
-              <div className='grow inline-size-max'>{v.title}</div>
+              <div className='grow inline-size-max'>{v.title || '[No Name]'}</div>
               <div className='w-4 text-right'>
                 {self.state.tabs[i].wait_save && '*'}
               </div>
@@ -114,16 +138,17 @@ export function EditTabs({ onRun, onSave, noTool, self }) {
   </>)
 }
 
+
 function Tool({ title = 'Edit', onSave, onRun, self }) {
-  const [message,setMessage] = useState('')
+  const [message, setMessage] = useState('')
   self.setMessage = setMessage
 
-  let [timeid,setTimeid] = useState(null)
-  useEffect(()=>{
+  let [timeid, setTimeid] = useState(null)
+  useEffect(() => {
     clearTimeout(timeid)
-    timeid = setTimeout(()=>setMessage(''), 4000)
+    timeid = setTimeout(() => setMessage(''), 4000)
     setTimeid(timeid)
-  },[message])
+  }, [message])
 
   return (<div className='flex p-2 items-center'>
 
@@ -132,8 +157,20 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
         {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
       </Icon>
       <div className='editor-popup absolute mt-2 z-50 min-w-[100px]'>
-        <div className='btn px-4 py-2 w-full text-left'>Help</div>
-        <div className='btn px-4 py-2 w-full text-left'>Quit</div>
+        {[
+          {
+            text: 'Tab new', click: () => {
+              self.tabnew()
+            }
+          },
+
+        ].map(({ text, click }, i) => (
+          <div key={i}
+            className='btn px-4 py-2 w-full text-left'
+            onClick={click}>
+            {text}
+          </div>
+        ))}
       </div>
     </div>
     <h5 className='grow m-0'>{message || title}</h5>

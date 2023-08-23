@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@site/src/comp/layout'
 import CodeBlock from '@theme/CodeBlock';
+import * as router from '@docusaurus/router';
 
  function MyReactPage() {
   return (
@@ -18,6 +19,11 @@ import CodeBlock from '@theme/CodeBlock';
 }
 
 export default function Blank() {
+  const location = router.useLocation();
+  const history = router.useHistory();
+  history.listen((e)=>{
+    console.log(e)
+  })
   return (<Layout>
     <div className='bg-emerald-100'
       style={{
@@ -29,7 +35,14 @@ export default function Blank() {
         padding: '15px',
       }}>
       <p>
-        这是一个没有包装的页面
+        这是一个没有包装的页面 <br />
+        {location.pathname} <br />
+
+        {location.search}<br />
+        {location.hash}<br />
+        <button onClick={()=>{
+          history.push('/edit-root#f=README.md&f=static/test.sh')
+        }}>router test</button>
       </p>
     </div>
     <div className="bg-blue-500 text-white p-4">
