@@ -56,9 +56,11 @@ code,
   cursor: text;
   /* box-shadow: none !important; */
   font-family: var(--ifm-font-family-monospace) !important;
-
 }
 
+.cm-content{
+  padding-right: 4px !important;
+}
 /* .CodeMirror-lines{
   padding: 0;
 } */

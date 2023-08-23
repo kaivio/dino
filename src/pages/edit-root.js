@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as router from '@docusaurus/router';
 import Layout from '@site/src/comp/layout'
 
@@ -42,7 +42,7 @@ export default function EditorPage() {
         .catch((err) => {
           current.setMessage(err + '')
         })
-    )).then(()=>{
+    )).then(() => {
       files.map((f, i) => current.tabnew(f))
       current.tabclose(0)
     })
@@ -51,15 +51,38 @@ export default function EditorPage() {
     current.tabnext(0)
   }, [])
 
+  const handleSave = useCallback(() => {
+    console.log('save');
+    
+    // let editor = ref.current.get_editor()
+    // let doc = editor.state.doc.toString()
+    let tab = ref.current.get_tab()
+    let doc = tab.editor.state.doc.toString()
+    console.log(doc);
+    console.log(tab.name);
+
+    axios.put('/api/open?file=' + tab.name, doc, {
+      headers:{'Content-Type':'text/plain'}
+    })
+    .then((res) => {
+      ref.current.setMessage('Saved')
+    })
+    .catch((err) => {
+      ref.current.setMessage(err + '')
+    })
+  })
+  const handleRun = useCallback(() => {
+    console.log('run');
+  })
+
   return (<Layout title="Edit ">
     <div className='h-[100vh]'>
-      <Edit self={ref}
-        onSave={() => {
-          console.log('save');
-        }}
-        onRun={() => {
-          console.log('run');
-        }}
+      <Edit self={ref} tools={{
+        actions: {
+          save: handleSave,
+          run: handleRun,
+        }
+      }}
 
       />
     </div>

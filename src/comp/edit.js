@@ -12,7 +12,7 @@ import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs
 import theme from "../lib/codemirror-theme"
 import { recognizeLang } from '../lib/langs-extname'
 
-export default function Edit({ className, self = {}, ...props }) {
+export default function Edit({ className, tools, self = {}, ...props }) {
   const [active, setActive] = useState(0)
   const [tabLabels, setTabLabels] = useState([])
 
@@ -63,6 +63,7 @@ export default function Edit({ className, self = {}, ...props }) {
         dom: dom_tab,
         editor: editor,
         id,
+        name,
       })
     }
 
@@ -114,13 +115,17 @@ export default function Edit({ className, self = {}, ...props }) {
 
     }
 
-    current.get_editor = (n = current.state.active) => {
-      let id = current.state.tabLabels[n].id
+    current.get_tab =  (n = current.state.active) => {
+      let id = ref.current.state.tabLabels[n].id
       for (let i in current.tabs) {
-        if (current.tabs[i].id == id)
-          return current.tabs[i].editor
+        if (ref.current.tabs[i].id == id)
+          return ref.current.tabs[i]
       }
-      return current.tabs[0].editor
+      return ref.current.tabs[0]
+    }
+
+    current.get_editor = (n = current.state.active) => {
+      return current.get_tab(n).editor
     }
 
   }, [])
@@ -133,7 +138,7 @@ export default function Edit({ className, self = {}, ...props }) {
 
   return (<>
     <div id='editor-ui' className="editor-ui flex flex-col h-full " >
-      <Tool self={ref} />
+      <Tool self={ref} {...tools} />
       {/* 标签栏 ( 多套层div防止overflow混乱 )*/}
       <div>
         <div className="editor-tabs flex overflow-auto  border-current" >
@@ -172,7 +177,7 @@ function TabLable({ name, active, index, tabnext, ...props }) {
 
 
 
-function Tool({ title = 'Edit', onSave, onRun, self }) {
+function Tool({ title = 'Edit', actions={}, self }) {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -231,8 +236,7 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
           ))}
       </div>
     </button>
-    {/* <input id='xxx' type='button' value='xxx' className='focus:bg-red-500'></input> */}
-    <label for='menu-label' className='grow m-0'>{message || title}</label>
+    <label for='menu-label' className='grow m-0 truncate	'>{message || title}</label>
 
     <div className='space-x-2 flex'>
       <Icon alt='Redo'
@@ -247,10 +251,10 @@ function Tool({ title = 'Edit', onSave, onRun, self }) {
       >
         {feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}
       </Icon>
-      <Icon alt='Save' onClick={onSave} >
+      <Icon alt='Save' onClick={actions.save} >
         {feather.icons['save'].toSvg({ width: 18, height: 18 })}
       </Icon>
-      <Icon alt='Run' onClick={onRun}>
+      <Icon alt='Run' onClick={actions.run}>
         {feather.icons['play'].toSvg({ width: 18, height: 18 })}
       </Icon>
     </div>
