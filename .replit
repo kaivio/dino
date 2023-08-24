@@ -1,6 +1,6 @@
 entrypoint = "dev.js"
 
-onBoot = "echo boot... && git pull && npm i"
+onBoot = " git pull && npm i"
 
 [[ports]]
 localPort = 3000
