@@ -70,7 +70,7 @@ function start(run_cp1 = true) {
   return { close, restart }
 }
 
-cp = start(false)
+cp = start()
 console.log('startd');
 
 process.on('SIGINT', () => {
