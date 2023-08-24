@@ -1,10 +1,6 @@
 import java.lang.System;
 import android.widget.Button;
 import android.widget.Toast;
-import android.app.Activity;
-import java.lang.Exception;
-import java.lang.Thread;
-import java.lang.String;
 
 
 public class Main{

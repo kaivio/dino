@@ -25,6 +25,7 @@ const config = {
   ],
   plugins: [
     '@docusaurus/theme-live-codeblock',
+    './my-plugin',
     async function myPlugin(context, options) {
       return {
         name: "docusaurus-tailwindcss",
