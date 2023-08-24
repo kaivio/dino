@@ -1,53 +1,81 @@
-const { spawn } = require('child_process');
+const { spawn, fork } = require('child_process');
+const fs = require('fs');
 
-// 启动第一个子进程
-const childProcess1 = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', [
-  'run', 'start', '--',
-  '--host', '0.0.0.0',
-  '--port', '3001',
-  '--no-open'
-]);
+const logs = fs.createWriteStream('tmp/dev.log',{flags:'a'})
+/**
+ * 
+ * @returns {childProcess}
+ */
+function my_spawn({ title = '', run = 'echo', args = [] }) {
+  title = title || run
+  let cp = spawn(run, args)
+  let pid = cp.pid
 
-// 绑定标准输出流和错误流
-childProcess1.stdout.on('data', (data) => {
-  console.log(`---  npm run start ---\n${data}`);
-});
+  cp.stdout.on('data', (data) => {
+    logs.write(data)
+    console.log(`# ${title} - [${pid}] \n${data}`);
+  });
+  cp.stderr.on('data', (data) => {
+    logs.write(data)
+    console.log(`# ${title} - [${pid}] \n${data}`);
+  });
 
-childProcess1.stderr.on('data', (data) => {
-  console.error(`---  npm run start ---\n${data}`);
-});
-
-// 启动第二个子进程
-const childProcess2 = spawn('node', ['server.js']);
-
-// 绑定标准输出流和错误流
-childProcess2.stdout.on('data', (data) => {
-  console.log(`---  node server.js ---\n${data}`);
-});
-
-childProcess2.stderr.on('data', (data) => {
-  console.error(`---  node server.js ---\n${data}`);
-});
-
-childProcess1.on('error', (err) => {
-  console.error(`--- ERROR npm run start  ---\n${err.message}`);
-  console.log(err)
-});
-childProcess2.on('error', (err) => {
-  console.error(`--- ERROR node server.js  ---\n${err.message}`);
-  console.log(err)
-
-});
+  return cp
+}
 
 
-// 监听中断信号（如 Ctrl+C）
+function start(run_cp1 = true) {
+  let cp1, cp2
+
+  if (run_cp1)
+    cp1 = my_spawn({
+      title: 'DEV SERVER',
+      run: /^win/.test(process.platform) ? 'npm.cmd' : 'npm',
+      args: [
+        'run', 'start', '--',
+        '--host', '0.0.0.0',
+        '--port', '3001',
+        '--no-open'
+      ]
+    })
+
+  cp2 = fork('server.js')
+  // cp2 = my_spawn({
+  //   title: 'EXPRESS APP',
+  //   run: 'node',
+  //   args: [
+  //     'server.js'
+  //   ]
+  // })
+
+
+  function close() {
+    run_cp1 && cp1.kill()
+    cp2.kill()
+    //process.kill(cp.pid, 'SIGINT');
+    //process.kill(cp.pid, 'SIGINT');
+  }
+  function restart(run_cp1) {
+    close()
+    start(run_cp1)
+  }
+
+  cp2.on('message', (msg) => {
+    console.log(msg);
+    if (msg == 'restart') {
+      restart(run_cp1)
+    }
+  })
+
+  return { close, restart }
+}
+
+cp = start(false)
+console.log('startd');
+
 process.on('SIGINT', () => {
-    // 结束所有子进程
-    childProcess1.kill();
-    childProcess2.kill();
-
-    //process.kill(childProcess1.pid, 'SIGINT');
-    // process.kill(childProcess2.pid, 'SIGINT');
-
-    process.exit();
+  cp.close()
+  process.exit();
 });
+
+

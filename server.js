@@ -5,17 +5,28 @@ const fs = require('fs');
 const path = require('path');
 const morgan = require('morgan');
 
-
 const app = express();
 const proxy = httpProxy.createProxyServer();
 
-app.use(morgan('dev'));
+// const log_stream = fs.createWriteStream('tmp/app.log',{
+//   autoClose:false,
+// })
+app.use(morgan('dev',));
 app.use(express.text());
 
 app.get('/api', (req, res) => {
   res.send('Hello World!')
 })
 
+app.get('/api/ping', (req, res) => {
+  res.send(new Date().toISOString())
+})
+
+process.send = process.send || function(){}
+app.get('/api/restart', (req, res) => {
+  process.send('restart')
+  res.send('restart...')
+})
 
 // 读取文件内容
 app.get('/api/open', (req, res) => {
@@ -35,8 +46,6 @@ app.get('/api/open', (req, res) => {
 app.put('/api/open', (req, res) => {
     const filePath = req.query.file; // 文件路径
     const content = req.body; // 要写入的内容
-    console.log(filePath)
-    console.log(content)
     fs.writeFile(filePath, content, 'utf-8', err => {
         if (err) {
             console.error(err);
@@ -54,22 +63,50 @@ app.use((req, res) => {
 });
 
 // 监听代理服务器的错误事件
-proxy.on('error', (err, req, res) => {
-  res.status(500).send('代理请求失败: '+err);
+proxy.on('error', (err, req, res) => { 
+  let info = fs.readFileSync('tmp/dev.log', {encoding:'utf-8'})
+  res.status(502).send(render502(info));
 });
 
 
-
-
+// http 500
 app.use((err, req, res, next) => {
-  // 处理错误逻辑
-  console.error(err); // 打印错误信息
-
-  // 根据需要发送合适的响应给客户端
+  console.error(err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// 启动应用监听指定端口号
+
+
 app.listen(3000, () => {
   console.log('App is running on port 3000');
 });
+
+
+function render502(info){
+  let code = 502
+  let title = '代理请求失败'
+  return `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>${code} ${title}</title>
+      <style>
+        h1, p {text-align: center}
+        pre{overflow: auto}
+      </style>
+    </head>
+    <body>
+    <h1>${code}</h1>
+    <p>${title}</p>
+    <pre id="info"></pre>
+
+    <script>
+      var info = ${JSON.stringify(info)}
+      document.getElementById('info').innerText = info
+    </script>
+    </body>
+  </html>  
+`
+}
