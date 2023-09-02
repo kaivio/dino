@@ -1,7 +1,14 @@
-const { spawn, fork } = require('child_process');
+const { spawn, spawnSync, fork } = require('child_process');
 const fs = require('fs');
+const pkg = require('./package.json')
 
-const logs = fs.createWriteStream('tmp/dev.log',{flags:'a'})
+const deps = {
+  dependencies: pkg.dependencies,
+  devDependencies: pkg.devDependencies,
+}
+
+
+const logs = fs.createWriteStream('tmp/dev.log', { flags: 'a' })
 /**
  * 
  * @returns {childProcess}
@@ -26,6 +33,27 @@ function my_spawn({ title = '', run = 'echo', args = [] }) {
 
 function start(run_cp1 = true) {
   let cp1, cp2
+
+  console.log('git fetch ');
+  spawnSync('git', ['fetch'], { stdio: 'inherit' })
+
+  // npm install 
+  let deps_str = JSON.stringify(deps, 2, ' ')
+  let cache_deps
+  try {
+    cache_deps = fs.readFileSync('tmp/deps.json', { encoding: 'utf-8' })
+  } catch (e) {
+    cache_deps = ''
+  }
+
+  if (cache_deps != deps_str) {
+    console.log('npm install ');
+    spawnSync(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['i'], { stdio: 'inherit' })
+    fs.writeFile('tmp/deps.json', deps_str, (err) => 0)
+
+  }
+
+
 
   if (run_cp1)
     cp1 = my_spawn({
