@@ -1,18 +1,23 @@
-
 const express = require('express');
+const cors = require('cors')
 const httpProxy = require('http-proxy');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+
 const fs = require('fs');
 const path = require('path');
-const morgan = require('morgan');
 
 const app = express();
 const proxy = httpProxy.createProxyServer();
 
-// const log_stream = fs.createWriteStream('tmp/app.log',{
-//   autoClose:false,
-// })
+app.use(cors())
 app.use(morgan('dev',));
-app.use(express.text());
+app.use(express.raw({
+  inflate: true,
+  limit: '1gb',
+  type: () => true
+}));
+
 
 app.get('/api', (req, res) => {
   res.send('Hello World!')
@@ -22,7 +27,7 @@ app.get('/api/ping', (req, res) => {
   res.send(new Date().toISOString())
 })
 
-process.send = process.send || function(){}
+process.send = process.send || function () { }
 app.get('/api/restart', (req, res) => {
   process.send('restart')
   res.send('restart...')
@@ -30,30 +35,34 @@ app.get('/api/restart', (req, res) => {
 
 // 读取文件内容
 app.get('/api/open', (req, res) => {
-    const filePath = req.query.file; // 文件路径
+  const filePath = req.query.file; // 文件路径
 
-    fs.readFile(filePath, 'utf-8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('error: Failed to read file');
-        }
+  fs.readFile(filePath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('error: Failed to read file');
+    }
 
-        res.send(data);
-    });
+    res.send(data);
+  });
 });
 
 // 写入文件内容
 app.put('/api/open', (req, res) => {
-    const filePath = req.query.file; // 文件路径
-    const content = req.body; // 要写入的内容
-    fs.writeFile(filePath, content, 'utf-8', err => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Failed to write file' });
-        }
+  const filePath = req.query.file; // 文件路径
+  const content = req.body; // 要写入的内容
+  console.log(req.headers);
+  console.log(filePath);
+  console.log(content);
 
-        res.sendStatus(200);
-    });
+  fs.writeFile(filePath, content, 'utf-8', err => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to write file' });
+    }
+
+    res.sendStatus(200);
+  });
 });
 
 
@@ -63,8 +72,8 @@ app.use((req, res) => {
 });
 
 // 监听代理服务器的错误事件
-proxy.on('error', (err, req, res) => { 
-  let info = fs.readFileSync('tmp/dev.log', {encoding:'utf-8'})
+proxy.on('error', (err, req, res) => {
+  let info = fs.readFileSync('tmp/dev.log', { encoding: 'utf-8' })
   res.status(502).send(render502(info));
 });
 
@@ -82,7 +91,7 @@ app.listen(3000, () => {
 });
 
 
-function render502(info){
+function render502(info) {
   let code = 502
   let title = '代理请求失败'
   return `<!DOCTYPE html>

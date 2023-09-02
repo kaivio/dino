@@ -71,6 +71,7 @@ function start(run_cp1 = true) {
 }
 
 cp = start()
+// cp = start(false)
 console.log('startd');
 
 process.on('SIGINT', () => {
