@@ -2,11 +2,13 @@ entrypoint = "dev.js"
 
 onBoot = "git fetch"
 
+hidden = [".config", "package-lock.json"]
+
 [[ports]]
 localPort = 3000
 externalPort = 8099
 
-hidden = [".config", "package-lock.json"]
+
 
 [interpreter]
 command = [
@@ -16,6 +18,7 @@ command = [
     "\u0001\u001b[33m\u0002\u0001\u001b[00m\u0002 ",
     "-i"
 ]
+
 
 [[hints]]
 regex = "Error \\[ERR_REQUIRE_ESM\\]"
@@ -32,13 +35,14 @@ npm_config_prefix = "$REPL_HOME/.config/npm/node_global"
 [gitHubImport]
 requiredFiles = [".replit", "replit.nix", ".config", "package.json", "package-lock.json"]
 
-[packager]
-language = "nodejs"
+# [packager]
+# language = "nodejs"
+# # ignoredPackages = ["*"]
 
-  [packager.features]
-  packageSearch = true
-  guessImports = true
-  enabledForHosting = false
+#   [packager.features]
+#   packageSearch = true
+#   guessImports = true
+#   enabledForHosting = false
 
 [unitTest]
 language = "nodejs"
