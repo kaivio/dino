@@ -4,7 +4,7 @@ const httpProxy = require('http-proxy');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
-const fs = require('fs');
+const fs = require('fs-extra')
 const path = require('path');
 
 const app = express();
@@ -55,6 +55,7 @@ app.put('/api/open', (req, res) => {
   console.log(filePath);
   console.log(content);
 
+  fs.ensureFileSync(filePath)
   fs.writeFile(filePath, content, 'utf-8', err => {
     if (err) {
       console.error(err);

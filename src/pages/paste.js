@@ -7,20 +7,6 @@ import * as router from '@docusaurus/router';
 import axios from 'axios';
 import { useRef } from 'react';
 
-// function reducer(state, action) {
-//   if (Array.isArray(action)) {
-//     const [operate, obj] = action
-//     if (operate == 'push') {
-//       let new_state = {}
-//       for (let k in obj) {
-//         new_state[k] = [...state[k], ...obj[k]]
-//       }
-//       return { ...state, ...new_state }
-//     }
-//   }
-
-//   return { ...state, ...action }
-// }
 
 function reducer(state, action) {
   switch (action.type) {
@@ -75,6 +61,10 @@ export default function Paste() {
   }
 
   function load() {
+    if(state.id != document.location.hash.substring(1)) {
+      document.location.hash = '#' + state.id
+    }
+
     axios.get(`/api/open?file=tmp/paste/${state.id}.json`)
       .then((res) => {
         // console.log(res.data);
