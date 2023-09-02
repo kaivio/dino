@@ -1,6 +1,6 @@
 entrypoint = "dev.js"
 
-onBoot = "git pull && npm i"
+onBoot = "git fetch"
 
 [[ports]]
 localPort = 3000
