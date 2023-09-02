@@ -108,7 +108,7 @@ const config = {
             label: 'Tutorial',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
-          { to: '/edit', label: 'Edit', position: 'left' },
+          { to: '/docs/some', label: 'Some', position: 'left' },
           {
             href: 'https://github.com/facebook/docusaurus',
             label: 'GitHub',
