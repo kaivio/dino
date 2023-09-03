@@ -3,6 +3,8 @@ const cors = require('cors')
 const httpProxy = require('http-proxy');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const mime  = require ('mime');
+const contentDisposition = require('content-disposition')
 
 const fs = require('fs-extra')
 const path = require('path');
@@ -35,9 +37,18 @@ app.get('/api/restart', (req, res) => {
 
 // 读取文件内容
 app.get('/api/open', (req, res) => {
-  const filePath = req.query.file; // 文件路径
-
-  fs.readFile(filePath, 'utf-8', (err, data) => {
+  const filePath = req.query.file; // 文件路径 
+  const decodedFilePath = decodeURIComponent(filePath)
+  console.log('read file: '+decodedFilePath);
+  // :
+  res.setHeader('content-type', mime.getType(filePath))
+  // let disposition = `inline; filename*=UTF-8''${}`
+  // console.log(disposition);
+  res.setHeader('content-disposition',
+     contentDisposition(decodedFilePath.split('/').pop(), {type:'inline'}) )
+  // res.setHeader('Content-Disposition',  
+  //   ['inline' ,  `attachment; filename="${filePath.split('/').pop()}"`])
+  fs.readFile(decodedFilePath, (err, data) => {
     if (err) {
       console.error(err);
       return res.status(500).send('error: Failed to read file');

@@ -6,6 +6,7 @@ import Layout from '@theme/Layout';
 import * as router from '@docusaurus/router';
 import axios from 'axios';
 import { useRef } from 'react';
+import mime from 'mime/lite';
 
 
 function reducer(state, action) {
@@ -27,10 +28,17 @@ function reducer(state, action) {
         ...new_state
       };
     }
+    case 'replace': {
+      let i = state[action.target].indexOf(action.query)
+      if (i > -1) {
+        state[action.target][i] = action.value
+      }
+
+      return { ...state }
+    }
   }
   throw Error('Unknown action: ' + action.type);
 }
-
 
 export default function Paste() {
   const location = router.useLocation();
@@ -61,7 +69,7 @@ export default function Paste() {
   }
 
   function load() {
-    if(state.id != document.location.hash.substring(1)) {
+    if (state.id != document.location.hash.substring(1)) {
       document.location.hash = '#' + state.id
     }
 
@@ -86,15 +94,6 @@ export default function Paste() {
 
   useEffect(() => {
     load()
-    return () => {
-      // free blob
-      state.media.map((v, i) => {
-        if (v.startsWith("blob:")) {
-          URL.revokeObjectURL(v)
-        }
-      })
-    }
-
   }, [])
 
   useEffect(() => {
@@ -124,10 +123,11 @@ export default function Paste() {
           }} />
 
         <div className='flex flex-wrap mt-5 select-none'>
-          {state.media.map((v, i) => <img
+          {state.media.map((v, i) => <MediaView
             key={i}
-            className='w-[100px] h-[100px] object-cover'
             src={v}
+            dispatch={dispatch}
+            uploadAfter={save}
           />)}
           <label htmlFor="media_uploads" className='btn hover:bg-slate-700 bg-slate-500 text-slate-300 text-[50px] w-[100px] h-[100px] text-center leading-[100px] '>+</label>
         </div>
@@ -138,21 +138,99 @@ export default function Paste() {
 
           })}
         />
-        <img id='media_view' />
       </div>
 
     </Layout>
   );
 }
 
+
+
+function MediaView({ src, dispatch, uploadAfter, ...props }) {
+  let url, type, name, size, status
+  if (src instanceof Blob) {
+    type = src.type
+    name = src.name
+    size = src.size
+    url = URL.createObjectURL(src)
+    status = 'local'
+  } else {
+    // console.log(mime);
+    url = src
+    console.log(url);
+    name = new URL(url, document.location).searchParams.get('file')
+      .split('/').pop()
+    type = mime.getType(url)
+    status = 'remote'
+  }
+
+  useEffect(() => {
+    if (src instanceof Blob) {
+      URL.revokeObjectURL(url)
+
+      let new_url = `/api/open?file=tmp/paste/media/${name}`
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        axios.put(new_url, e.target.result,
+          {
+            headers: { 'Content-Type': type }
+          })
+          .then((res) => {
+            console.log('ok');
+            dispatch({
+              type: 'replace',
+              target: 'media',
+              query: src,
+              value: new_url
+            })
+            URL.revokeObjectURL(src)
+            uploadAfter || uploadAfter()
+          })
+          .catch((err) => {
+            console.log(err);
+
+          })
+      };
+
+      reader.readAsArrayBuffer(src);
+
+
+
+      return () => {
+        // free blob
+        URL.revokeObjectURL(src)
+      }
+    }
+
+  }, [])
+
+  return (<>
+    <div className='w-[100px] h-[100px] relative'>
+      {type.startsWith('image') &&
+        <img src={src} className='w-full h-full object-cover' /> ||
+        <div data-src={src} className='w-full h-full'>{type}</div>
+      }
+      <div className='absolute text-xs w-[100px] bottom-0 text-gray-300 bg-[#0000007f] truncate '
+        // dir='rtl'
+         style={{ direction: 'rtl' }}
+      >
+        {name}
+      </div>
+    </div>
+  </>)
+}
+
+
 function processSelectFile(e, dispatch) {
   const files = e.target.files;
 
   for (let file of files) {
     console.log(file);
+    console.log(file instanceof Blob);
     dispatch({
       type: 'push',
-      media: [URL.createObjectURL(file)]
+      media: [file]
     })
 
 
