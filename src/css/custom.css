@@ -58,9 +58,10 @@ code,
   font-family: var(--ifm-font-family-monospace) !important;
 }
 
-.cm-content{
+.cm-content {
   padding-right: 4px !important;
 }
+
 /* .CodeMirror-lines{
   padding: 0;
 } */
@@ -88,25 +89,68 @@ code,
   user-select: none;
 }
 
-.btn:hover, .ibtn:hover {
+.btn:hover,
+.ibtn:hover {
   background: color-mix(in srgb, #000000 0%, currentColor 12.5%);
 }
 
-.btn:active, .ibtn:active {
+.btn:active,
+.ibtn:active {
   background: color-mix(in srgb, #000000 0%, currentColor 25%);
 }
 
+
+/* @media (hover:hover) {
+  .my-button:hover::before {
+    background-color: currentColor;
+    display: block;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.25;
+
+  }
+} */
+
+.my-button::before:hover {
+  background-color: currentColor;
+  display: block;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.25;
+  
+
+}
+
+
+.my-button {
+  position: relative;
+  width: max-content;
+  height: max-content;
+  /* width: 200px;
+  height: 100px; */
+  /* display: flex; */
+}
 
 .editor-ui {
   background: var(--gruvbox-mode-bg-1);
   color: var(--gruvbox-mode-fg-3);
 }
-.editor-tabs > .active{
+
+.editor-tabs>.active {
   background: var(--gruvbox-mode-bg-0);
   color: var(--gruvbox-mode-fg-1);
 
 }
-.editor-popup{
+
+.editor-popup {
   background: var(--gruvbox-mode-bg-2);
   color: var(--gruvbox-mode-fg-0);
   /* border: 1px solid var(--gruvbox-mode-gray); */
@@ -177,7 +221,8 @@ code,
   --gruvbox-mode-aqua: var(--gruvbox-abs-neutral-aqua);
   --gruvbox-mode-orange: var(--gruvbox-abs-neutral-orange);
 }
-[data-theme='dark']  {
+
+[data-theme='dark'] {
   --gruvbox-mode-lh: #5049457f !important;
   --gruvbox-mode-bg-0: var(--gruvbox-abs-dark-0);
   --gruvbox-mode-bg-0-s: var(--gruvbox-abs-dark-0-soft);
@@ -206,6 +251,7 @@ code,
   border: none !important;
 }
 
-.cm-cursor, .cm-dropCursor {
+.cm-cursor,
+.cm-dropCursor {
   border-left-width: 1.5px !important;
 }

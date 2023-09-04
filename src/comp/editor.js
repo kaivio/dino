@@ -12,7 +12,7 @@ import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs
 import theme from "../lib/codemirror-theme"
 import { recognizeLang } from '../lib/langs-extname'
 
-export default function Edit({ className, tools, self = {}, ...props }) {
+export default function Editor({ className, tools, self = {}, ...props }) {
   const [active, setActive] = useState(0)
   const [tabLabels, setTabLabels] = useState([])
 
@@ -137,7 +137,7 @@ export default function Edit({ className, tools, self = {}, ...props }) {
   })
 
   return (<>
-    <div id='editor-ui' className="editor-ui flex flex-col h-full " >
+    <div id='editor-ui' className="editor-ui flex flex-col h-full overflow-hidden" >
       <Tool self={ref} {...tools} />
       {/* 标签栏 ( 多套层div防止overflow混乱 )*/}
       <div>
@@ -155,7 +155,7 @@ export default function Edit({ className, tools, self = {}, ...props }) {
       </div>
 
       {/* 编辑视图 */}
-      <div id='editor_views' className='grow [&>.editor-tab-content]:h-full'>
+      <div id='editor_views' className='grow overflow-auto [&>.editor-tab-content]:h-full'>
       </div>
     </div>
   </>)
