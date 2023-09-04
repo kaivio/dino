@@ -1,5 +1,33 @@
 # react-json-view 测试
 
+<!--
+构建出错
+import ReactJson from 'react-json-view'
+import axios  from 'axios';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+
+export const View = function () {
+  return <BrowserOnly>{()=>{
+    const [value, setValue] = React.useState({});
+    React.useEffect(() => {
+      axios.get('/api/open',{
+        params:{file: 'package.json'}, 
+        responseType: 'json'
+      })
+      .then(response => {
+        setValue(response.data)
+      })
+      .catch(error => {
+        setValue(error.message)
+      });
+    }, []);
+    return <ReactJson src={value} />
+  }}</BrowserOnly>
+}
+
+<View /> 
+-->
 
 export const FontTest = () => {
   const fonts = [
