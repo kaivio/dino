@@ -3378,7 +3378,7 @@ const LANGS_EXTNAME = [
 
 export function recognizeLang(extname){
  for (let item of LANGS_EXTNAME){
-  console.log(item);
+  // console.log(item);
   for(let ext of item.extensions || []){
     if(ext == '.'+extname){
       return item.name.toLowerCase()

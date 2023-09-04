@@ -31,8 +31,8 @@ export default function Edit({ className, tools, self = {}, ...props }) {
 
     current.tabnew = ({ name = '', lang = 'textile', doc = '' } = {}, at = -1) => {
       // 添加一个 TabLabel
-      console.log(lang);
-      console.log(loadLanguage(lang));
+      // console.log(lang);
+      // console.log(loadLanguage(lang));
 
       const id = makeid()
       setTabLabels((labels) => {
@@ -227,7 +227,7 @@ function Tool({ title = 'Edit', actions={}, self }) {
       </Icon>
       <div className='editor-popup absolute z-50 min-w-[100px]'>
         {menu_content.map(({ text, click }, i) => text == '--' ?
-          <div style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
+          <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
             <div key={i}
               className='btn px-4 py-2 w-full text-left whitespace-nowrap '
               onClick={click}>
@@ -236,7 +236,7 @@ function Tool({ title = 'Edit', actions={}, self }) {
           ))}
       </div>
     </button>
-    <label for='menu-label' className='grow m-0 truncate	'>{message || title}</label>
+    <label htmlFor='menu-label' className='grow m-0 truncate	'>{message || title}</label>
 
     <div className='space-x-2 flex'>
       <Icon alt='Redo'
