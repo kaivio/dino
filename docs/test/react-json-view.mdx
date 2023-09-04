@@ -1,29 +1,5 @@
 # react-json-view 测试
 
-import ReactJson from 'react-json-view'
-import axios  from 'axios';
-
-export const View = function () {
-  const [value, setValue] = React.useState({});
-  React.useEffect(() => {
-    axios.get('/api/open',{
-      params:{file: 'package.json'}, 
-      responseType: 'json'
-    })
-    .then(response => {
-      setValue(response.data)
-    })
-    .catch(error => {
-      setValue(error.message)
-    });
-  }, []);
-  return (
-<ReactJson src={value} />
-  );
-}
-
-
-<View />
 
 export const FontTest = () => {
   const fonts = [
