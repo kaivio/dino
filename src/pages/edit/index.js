@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as router from '@docusaurus/router';
 import Layout from '@site/src/comp/layout'
 
-import Edit from '@site/src/comp/edit';
+import Edit from '@site/src/comp/editor';
 
 // return {MAIN, JSX, METADATA, ERROR}
 async function load(path) {
