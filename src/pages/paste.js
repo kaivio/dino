@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useRef } from 'react';
 import mime from 'mime/lite';
 
+import Button from '../comp/button'
 
 function reducer(state, action) {
   switch (action.type) {
@@ -106,23 +107,22 @@ export default function Paste() {
 
       <div className='flex flex-col p-8'>
 
-        <div className='flex space-x-4'>
-          <label> id </label>
+        <div className='flex  '>
           {/* <input defaultValue={state.id}  ref={idRef}/> */}
-          <input value={state.id}
+          <input placeholder='id' className='grow min-w-0 width-auto' value={state.id}
             onChange={(e) => { dispatch({ type: 'mix', state: { id: e.target.value } }) }} />
-          <div className='btn' onClick={load}>load</div>
-          <div className='btn' onClick={save}>save</div>
+          <Button className="px-4 ml-2 text-sky-300" onClick={load}>load</Button>
+          <Button className="px-4 text-sky-300" onClick={save}>save</Button>
         </div>
 
         <textarea rows={10}
-          className='mt-5'
+          className='mt-3 resize-none'
           value={state.text}
           onChange={(e) => {
             dispatch({ type: 'mix', state: { text: e.target.value } })
           }} />
 
-        <div className='flex flex-wrap mt-5 select-none'>
+        <div className='flex flex-wrap mt-3 select-none'>
           {state.media.map((v, i) => <MediaView
             key={i}
             src={v}
@@ -131,7 +131,7 @@ export default function Paste() {
           />)}
           <label htmlFor="media_uploads" className='btn hover:bg-slate-700 bg-slate-500 text-slate-300 text-[50px] w-[100px] h-[100px] text-center leading-[100px] '>+</label>
         </div>
-        <input type='file' multiple
+        <input type='file' multiple className='hidden'
           id="media_uploads"
           onChange={(e => {
             let res = processSelectFile(e, dispatch)

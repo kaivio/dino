@@ -1,20 +1,17 @@
 import React from 'react';
 
-
 export default function Button({ className, children, ...props }) {
+  // left-0 right-0 top-[-50%] aspect-square rounded-full  
+  props.tabIndex = props.tabIndex || 0
   return (
-    // <div className='inline-block'>  overflow-hidden
-    // <div className="inline-block [&>div]:inline-block">
-
-    <div className={className + ' relative inline-block w-max'} {...props}>
-      <div className='absolute left-0 right-0 top-[-50%]
-      bg-current opacity-[0.5] rounded-full
-      aspect-square scale-0 active:scale-100
-      transform-[scale(0)]
-      '></div>
+    <div className={className +
+      ' rounded-sm cursor-pointer select-none whitespace-nowrap' +
+      ' overflow-hidden relative inline-block w-max'}
+      {...props}>
+      <div className='bg-current absolute left-0 right-0 top-0 bottom-0
+       opacity-0  pointer:hover:opacity-10 active:!opacity-50 
+       transition-opacity duration-500 ease-out'></div>
       <div className="inline">{children}</div>
     </div>
-    // </div>
-    // </div>
   )
 }

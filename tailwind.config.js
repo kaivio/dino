@@ -5,7 +5,14 @@ module.exports = {
       "./blog/**/*.{md,mdx}"
   ],
     theme: {
-      extend: {},
+      extend: {
+          screens: {
+            'pointer': { 
+              'raw': '(hover: hover) and (pointer: fine)' 
+            }
+          },
+      },
     },
     plugins: [],
   };
+

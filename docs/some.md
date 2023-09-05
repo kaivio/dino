@@ -23,14 +23,23 @@ export function Box(){
 
 ## Todo
 - [ ] 制作一个按钮组件
-  - [ ]  src/comp/button.js:12 scale-0 未达到预期效果
+  - [x] 基本按钮
+  - [ ] 图标按钮
+  - [ ] 样式变体按钮
+  - [ ] 状态按钮
 - [ ] 优化编辑器
 - [ ] 还有很多事情没做完
 - [ ] process  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
 
+
+# Docs
+- [tailwindcss](https://tailwindcss.com/docs/customizing-colors)
+
 ## Test
 
 <Box />
+
+
 
 
 
