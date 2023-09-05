@@ -28,6 +28,11 @@ export function Box(){
   - [ ] 样式变体按钮
   - [ ] 状态按钮
 - [ ] 优化编辑器
+  - [ ] 把按钮换成上面的的组件
+  - [ ] 增加对话框或者特殊标签页实现交互(如错误报告、编辑器设置、资源管理)
+  - [ ] 本地缓存
+- [ ] /paste 页面：处理非图片类型的文件预览，状态可视化，移除文件
+- [ ] 修改导航栏，添加文档页面的编辑入口
 - [ ] 还有很多事情没做完
 - [ ] process  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
 
@@ -38,6 +43,8 @@ export function Box(){
 ## Test
 
 <Box />
+
+
 
 
 
