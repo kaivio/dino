@@ -45,7 +45,10 @@
     "serve": {
       "name": "serve",
       "command": "npm run serve",
-      "runAtStart": false
+      "runAtStart": false,
+      "preview": {
+        "port": 8000
+      }
     },
     "write-translations": {
       "name": "write-translations",
