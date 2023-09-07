@@ -22,6 +22,10 @@ export function Box(){
 
 
 ## Todo
+- [x] **bug** 构建出来的按钮没有激活特效，初步检查原因是tw没有生成bg-*的样式
+  - 加了内联样式临时解决 
+
+---
 - [ ] 制作一个按钮组件
   - [x] 基本按钮
   - [ ] 图标按钮
@@ -40,9 +44,13 @@ export function Box(){
 # Docs
 - [tailwindcss](https://tailwindcss.com/docs/customizing-colors)
 
+
+
 ## Test
 
 <Box />
+
+
 
 
 
