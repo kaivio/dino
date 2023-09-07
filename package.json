@@ -1,8 +1,8 @@
 {
-  "name": "my-website",
-  "version": "0.0.0",
-  "private": true,
   "scripts": {
+    "edgio:dev": "edgio dev",
+    "edgio:build": "edgio build",
+    "edgio:deploy": "edgio deploy",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -13,6 +13,9 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },
+  "name": "my-website",
+  "version": "0.0.0",
+  "private": true,
   "dependencies": {
     "@codemirror/commands": "^6.2.4",
     "@codemirror/history": "^0.19.2",
@@ -42,6 +45,11 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "2.4.1",
+    "@edgio/cli": "^7.2.2",
+    "@edgio/core": "^7.2.2",
+    "@edgio/devtools": "^7.2.2",
+    "@edgio/prefetch": "^7.2.2",
+    "@edgio/react-cra": "^7.2.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
