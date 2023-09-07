@@ -10,7 +10,9 @@ export default function Button({ className, children, ...props }) {
       {...props}>
       <div className='bg-current absolute left-0 right-0 top-0 bottom-0
        opacity-0  pointer:hover:opacity-10 active:!opacity-50 
-       transition-opacity duration-500 ease-out'></div>
+       transition-opacity duration-500 ease-out' 
+       style={{backgroundColor: 'currentColor'}}
+       ></div>
       <div className="inline">{children}</div>
     </div>
   )
