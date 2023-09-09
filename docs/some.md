@@ -32,14 +32,38 @@ export function Box(){
   - [ ] 样式变体按钮
   - [ ] 状态按钮
 - [ ] 优化编辑器
-  - [ ] 把按钮换成上面的的组件
+  - [x] 把按钮换成上面的的组件
   - [ ] 增加对话框或者特殊标签页实现交互(如错误报告、编辑器设置、资源管理)
   - [ ] 本地缓存
 - [ ] /paste 页面：处理非图片类型的文件预览，状态可视化，移除文件
 - [ ] 修改导航栏，添加文档页面的编辑入口
 - [ ] 还有很多事情没做完
-- [ ] process  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
+- [x] process  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
+  
+产生上述警告的原因是因为在渲染期间操作了dom
+```jsx
+setState((oldState) => {
+  let newState = oldState + 1
+  // 不要在这里操作dom！
+  domWrite(newState)
+  return newState
+})
+```
 
+```jsx
+let data  
+flushSync(() => {
+  setState((oldState) => {
+    let newState = oldState + 1
+    // 应该缓存要操作的数据
+    data = newState
+    return newState
+  })
+})
+
+// 通过flushSync包装，保证状态更新完成后再操作dom
+domWrite(data)
+```
 
 # Docs
 - [tailwindcss](https://tailwindcss.com/docs/customizing-colors)
@@ -49,6 +73,8 @@ export function Box(){
 ## Test
 
 <Box />
+
+
 
 
 
