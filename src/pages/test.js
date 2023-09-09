@@ -136,7 +136,7 @@ function MyCustomPage() {
         <polyline points="13 2 13 9 20 9" />
       </svg>
     </Button>
-    <Button icon='figma' size="20px" className='p-2 bg-red-100  dark:bg-red-900' />
+    <Button icon='figma' size="20px" className=' p-2 bg-red-100  dark:bg-red-900' />
 
     <></>
     <div className='mb-96'></div>

@@ -19,29 +19,26 @@ export default function Editor({ className, tools, self = {}, ...props }) {
   const [tabLabels, setTabLabels] = useState([])
 
   const ref = useRef({})
+  const editor_views_ref = useRef()
   useEffect(() => {
     self.current = ref.current
     const current = self.current
 
     current.tabs = []
 
-    // current.flush = (newState = {}) => {
-    //   flushSync(() =>
-    //     setState((state) => { return { ...state, ...newState } })
-    //   )
-    // }
 
     current.tabnew = ({ name = '', lang = 'textile', doc = '' } = {}, at = -1) => {
       // 添加一个 TabLabel
-      // console.log(lang);
-      // console.log(loadLanguage(lang));
-
+      console.log('tabnew');
       const id = makeid()
-      setTabLabels((labels) => {
-        return [...labels, {
-          name,
-          id,
-        }]
+
+      flushSync(() => {
+        setTabLabels((labels) => {
+          return [...labels, {
+            name,
+            id,
+          }]
+        })
       })
 
       // 生成编辑器视图
@@ -59,7 +56,7 @@ export default function Editor({ className, tools, self = {}, ...props }) {
         parent: dom_tab,
       })
 
-      document.getElementById('editor_views').appendChild(dom_tab)
+      editor_views_ref.current.appendChild(dom_tab)
 
       current.tabs.push({
         dom: dom_tab,
@@ -70,50 +67,101 @@ export default function Editor({ className, tools, self = {}, ...props }) {
     }
 
     current.tabnext = (n) => {
-      setTabLabels((labels) => {
-        try {
-          let id = labels[n].id
-          current.tabs.map
-          current.tabs.map((t) => {
-            t.dom.style.display = 'none'
-          })
-          current.tabs.map((t) => {
-            if (t.id == id) {
-              t.dom.style.display = 'block'
-              t.editor.focus()
-            }
-          })
-
-          setActive(n)
-
-        } catch (e) {
-          console.log(e);
-        }
-        return labels
+      console.log('tab next');
+      current.tabs.map((t) => {
+        t.dom.style.display = 'none'
       })
-    }
 
-    current.tabclose = (n = current.state.active) => {
-      // 删除一个 TabLabel
-      setTabLabels((labels) => {
-        labels.splice(n, 1).map((label) => {
-          // 删除 dom
-          let id = label.id
-          let i = 0
-          for (; i < current.tabs.length; i++) {
-            if (current.tabs[i].id == id)
-              break
+      let target_tab = current.tabs[0]
+      let post_flushd = []
+      flushSync(() => {
+        setTabLabels((labels) => {
+          try {
+            let id = labels[n].id
+            current.tabs.map((t) => {
+              if (t.id == id) {
+                target_tab = t
+              }
+            })
+
+            setActive(n)
+
+          } catch (e) {
+            console.log(e);
           }
-          let tab = current.tabs.splice(i, 1)[0]
-          tab.editor = undefined
-          tab.dom.parentNode.removeChild(tab.dom)
-
-          current.tabnext(n == labels.length ? n - 1 : n)
-
+          return labels
         })
 
-        return [...labels]
+      });
+
+      if (target_tab)
+        target_tab.dom.style.display = 'block'
+    }
+
+    current.tabclose = (n = current.state.active, other = false) => {
+      console.log('tab close');
+
+      let ready_delete_tabs = []
+      flushSync(() => {
+
+        setTabLabels((labels) => {
+          // 删除一个 TabLabel
+          let deleted = labels.splice(n, 1)
+
+          if (other) {
+            // 删除的是其他 TabLabel
+            let tmp = deleted
+            deleted = labels
+            labels = tmp
+          }
+
+          // 删除 tab editor dom
+          deleted.map((label) => {
+            let id = label.id
+            let i = 0
+            for (; i < current.tabs.length; i++) {
+              if (current.tabs[i].id == id)
+                // 将删除操作缓存，待退出react更新期间后执行
+                ready_delete_tabs.push(current.tabs[i])
+              break
+            }
+
+            // 将删除操作缓存，待退出react更新期间后执行
+            //   ready_delete_tabs.push(current.tabs[i])
+            //   post_flushd.push(function () {
+            //       let tab = current.tabs.splice(i, 1)[0]
+            //       console.log('正在关闭标签');
+            //       console.log(tab);
+            //       if (tab) {
+            //         tab.editor = undefined
+            //         tab.dom.parentNode.removeChild(tab.dom)
+            //       }
+            //     })
+
+
+          })
+
+
+          console.log(labels);
+          return [...labels]
+        })
+
+      });
+
+      ready_delete_tabs.map((tab) => {
+        tab.editor = undefined
+        tab.dom.parentNode.removeChild(tab.dom)
       })
+
+      for (let i in current.tabs) {
+        if (current.tabs[i] in ready_delete_tabs) {
+          delete current.tabs[i]
+        }
+      }
+
+
+      n = other ? 0 : n
+      current.tabnext(n == current.state.tabLabels.length ? n - 1 : n)
 
     }
 
@@ -157,7 +205,7 @@ export default function Editor({ className, tools, self = {}, ...props }) {
       </div>
 
       {/* 编辑视图 */}
-      <div id='editor_views' className='grow overflow-auto [&>.editor-tab-content]:h-full'>
+      <div ref={editor_views_ref} id='editor_views' className='grow overflow-auto [&>.editor-tab-content]:h-full'>
       </div>
     </div>
   </>)
@@ -181,9 +229,20 @@ function TabLable({ name, active, index, tabnext, ...props }) {
 
 function Tool({ title = 'Edit', actions = {}, self }) {
   const [message, setMessage] = useState('')
-
+  const [menuOpen, setMenuOpen] = useState(false)
+  const handleMenuClick = (e) => {
+    setMenuOpen(true)
+    e.stopPropagation()
+  }
+  const handleWindowClick = (e) => {
+    setMenuOpen(false)
+  }
   useEffect(() => {
     self.current.setMessage = setMessage
+    window.addEventListener('click', handleWindowClick)
+    return () => {
+      window.removeEventListener('click', handleWindowClick)
+    }
   }, [])
 
   let timeid = useRef(null)
@@ -208,7 +267,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
     },
     {
       text: 'CLOSE OTHER', click: () => {
-        self.current.tabclose()
+        self.current.tabclose(self.current.state.active, true)
       }
     },
     {
@@ -221,51 +280,51 @@ function Tool({ title = 'Edit', actions = {}, self }) {
     },
   ]
 
-  return (<div className='flex p-2 items-center'>
-
-    <button id="menu-label" className='no-btn relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
-      <i className='inline-block overflow-hidden whitespace-nowrap w-[0]'>memu</i>
-      <div className='editor-popup absolute z-50 min-w-[100px]'>
-        {menu_content.map(({ text, click }, i) => text == '--' ?
-          <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
-            <div key={i}
-              className='btn px-4 py-2 w-full text-left whitespace-nowrap '
-              onClick={click}>
-              {text}
-            </div>
-          ))}
-      </div>
-    </button>
-    <label htmlFor='menu-label'>
-      <Button alt='Menu' className='p-2' size='18' icon='more-vertical' />
-    </label>
-    <label htmlFor='menu-label' className='grow m-0 truncate	'>{message || title}</label>
-
-    <div className='space-x-2 flex'>
-      <Button className='p-2' size='18' icon='corner-up-right'
-        alt='Redo'
-        onClick={() => {
-          commands.redo(self.current.get_editor())
-        }}
-      />
-      <Button className='p-2' size='18' icon='corner-up-left'
-        alt='Undo'
-        onClick={() => {
-          commands.undo(self.current.get_editor())
-        }}
-      />
-      <Button className='p-2' size='18' icon='save'
-        alt='Save'
-        onClick={actions.save}
-      />
-      {actions.run && 
-      <Button className='p-2' size='18' icon='play'
-        alt='Run' onClick={actions.run}
-      />}
-
+  return (<div>
+    <div className={'editor-popup absolute z-50 min-w-[100px] ' + (menuOpen ? '' : 'hidden')}>
+      {menu_content.map(({ text, click }, i) => text == '--' ?
+        <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
+          <Button key={i}
+            className='block px-4 py-2 !w-full text-left whitespace-nowrap rounded-none'
+            onClick={click}>
+            {text}
+          </Button>
+        ))}
     </div>
 
-  </div>)
+    <div className='flex p-2 items-center'>
+      <Button alt='Menu' className='p-2' size='18' icon='more-vertical'
+        onClick={handleMenuClick}
+      />
+
+
+      <div className='grow m-0 truncate	'>{message || title}</div>
+
+      <div className='space-x-2 flex'>
+        <Button className='p-2' size='18' icon='corner-up-right'
+          alt='Redo'
+          onClick={() => {
+            commands.redo(self.current.get_editor())
+          }}
+        />
+        <Button className='p-2' size='18' icon='corner-up-left'
+          alt='Undo'
+          onClick={() => {
+            commands.undo(self.current.get_editor())
+          }}
+        />
+        <Button className='p-2' size='18' icon='save'
+          alt='Save'
+          onClick={actions.save}
+        />
+        {actions.run &&
+          <Button className='p-2' size='18' icon='play'
+            alt='Run' onClick={actions.run}
+          />}
+
+      </div>
+
+    </div></div>)
 }
 
 

@@ -15,7 +15,7 @@ export default function EditorPage() {
 
   const ref = useRef({})
 
-  useEffect(() => {
+  useEffect(async () => {
     const current = ref.current
     let hash = location.hash
     let params = new URLSearchParams(hash.substring(1))
@@ -34,6 +34,11 @@ export default function EditorPage() {
       }
     })
 
+    // !(async function(){
+    // current.tabnew({ name: 'LOADING', doc })
+    // current.tabnext(0)
+    // })()
+
     Promise.all(files.map((f, i) =>
       axios.get('/api/open?file=' + f.name)
         .then((res) => {
@@ -44,11 +49,10 @@ export default function EditorPage() {
         })
     )).then(() => {
       files.map((f, i) => current.tabnew(f))
-      current.tabclose(0)
+      current.tabnext(0)
     })
 
-    current.tabnew({ name: 'LOADING', doc })
-    current.tabnext(0)
+
   }, [])
 
   const handleSave = useCallback(() => {

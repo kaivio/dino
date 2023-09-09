@@ -1,16 +1,12 @@
 import React from 'react';
 import feather from 'feather-icons';
 
-function ButtonContent({ children }) {
-  return <div className="inline">{children}</div>
+function ButtonContentWrapper({ children }) {
+  return <div className="">{children}</div>
 }
 
-function ButtonIconContent({ children }) {
-  return <div className="inline text-[0]">{children}</div>
-}
-
-function ButtonSVGStringContent({ children }) {
-  return <div className="inline text-[0]" dangerouslySetInnerHTML={{__html:children}}></div>
+function ButtonSVGStringWrapper({ children }) {
+  return <div className="" dangerouslySetInnerHTML={{__html:children}}></div>
 }
 
 
@@ -19,9 +15,9 @@ export function ButtonBase({ className, Wrapper, children, ...props }) {
   props.tabIndex = props.tabIndex || 0
   className += className.indexOf('rounded-') == -1 ? ' rounded-md' : ''
   return (
-    <div className={className +
+    <div className={className+
       ' cursor-pointer select-none whitespace-nowrap' +
-      ' overflow-hidden relative inline-block w-max'}
+      ' overflow-hidden relative w-max'}
       {...props}>
       <div className='bg-current absolute left-0 right-0 top-0 bottom-0
        opacity-0  pointer:hover:opacity-10 active:!opacity-50 
@@ -50,10 +46,10 @@ export function ButtonIcon({ className, icon, size = '16px', children, ...props 
 }
 
 export default function Button({ variant = 'base', ...props }) {
-  let wrapper = ButtonContent
+  let wrapper = ButtonContentWrapper
   if (props.icon) {
     variant = 'icon'
-    wrapper = ButtonSVGStringContent
+    wrapper = ButtonSVGStringWrapper
   } 
 
 
