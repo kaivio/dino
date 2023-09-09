@@ -11,6 +11,8 @@ import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs
 
 import theme from "../lib/codemirror-theme"
 import { recognizeLang } from '../lib/langs-extname'
+import Button from './button'
+
 
 export default function Editor({ className, tools, self = {}, ...props }) {
   const [active, setActive] = useState(0)
@@ -115,7 +117,7 @@ export default function Editor({ className, tools, self = {}, ...props }) {
 
     }
 
-    current.get_tab =  (n = current.state.active) => {
+    current.get_tab = (n = current.state.active) => {
       let id = ref.current.state.tabLabels[n].id
       for (let i in current.tabs) {
         if (ref.current.tabs[i].id == id)
@@ -177,7 +179,7 @@ function TabLable({ name, active, index, tabnext, ...props }) {
 
 
 
-function Tool({ title = 'Edit', actions={}, self }) {
+function Tool({ title = 'Edit', actions = {}, self }) {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -222,9 +224,7 @@ function Tool({ title = 'Edit', actions={}, self }) {
   return (<div className='flex p-2 items-center'>
 
     <button id="menu-label" className='no-btn relative [&>.editor-popup]:hidden [&:focus>.editor-popup]:block'>
-      <Icon alt='Menu' >
-        {feather.icons['more-vertical'].toSvg({ width: 18, height: 18 })}
-      </Icon>
+      <i className='inline-block overflow-hidden whitespace-nowrap w-[0]'>memu</i>
       <div className='editor-popup absolute z-50 min-w-[100px]'>
         {menu_content.map(({ text, click }, i) => text == '--' ?
           <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
@@ -236,27 +236,33 @@ function Tool({ title = 'Edit', actions={}, self }) {
           ))}
       </div>
     </button>
+    <label htmlFor='menu-label'>
+      <Button alt='Menu' className='p-2' size='18' icon='more-vertical' />
+    </label>
     <label htmlFor='menu-label' className='grow m-0 truncate	'>{message || title}</label>
 
     <div className='space-x-2 flex'>
-      <Icon alt='Redo'
+      <Button className='p-2' size='18' icon='corner-up-right'
+        alt='Redo'
         onClick={() => {
           commands.redo(self.current.get_editor())
         }}
-      >{feather.icons['corner-up-right'].toSvg({ width: 18, height: 18 })}</Icon>
-      <Icon alt='Undo'
+      />
+      <Button className='p-2' size='18' icon='corner-up-left'
+        alt='Undo'
         onClick={() => {
           commands.undo(self.current.get_editor())
         }}
-      >
-        {feather.icons['corner-up-left'].toSvg({ width: 18, height: 18 })}
-      </Icon>
-      <Icon alt='Save' onClick={actions.save} >
-        {feather.icons['save'].toSvg({ width: 18, height: 18 })}
-      </Icon>
-      <Icon alt='Run' onClick={actions.run}>
-        {feather.icons['play'].toSvg({ width: 18, height: 18 })}
-      </Icon>
+      />
+      <Button className='p-2' size='18' icon='save'
+        alt='Save'
+        onClick={actions.save}
+      />
+      {actions.run && 
+      <Button className='p-2' size='18' icon='play'
+        alt='Run' onClick={actions.run}
+      />}
+
     </div>
 
   </div>)
