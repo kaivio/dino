@@ -85,6 +85,9 @@ export default function EditorPage() {
         actions: {
           save: handleSave,
           run: handleRun,
+        },
+        onClickExit:(e)=>{
+          history.goBack()
         }
       }}
 

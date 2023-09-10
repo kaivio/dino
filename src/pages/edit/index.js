@@ -121,7 +121,7 @@ export default function EditorDoc() {
 
     save(path, { main, jsx, metadata })
       .then((res) => {
-        ref.current.setMessage('Saved')
+        //ref.current.setMessage('Saved')
       })
       .catch((err) => {
         ref.current.setMessage(err + '')
@@ -138,6 +138,21 @@ export default function EditorDoc() {
         actions: {
           save: handleSave,
           // run: handleRun,
+        },
+        hiddenTabControl: true,
+        menu: [ 
+          {
+            text: 'RELOAD', click:()=>{}
+          },
+          {
+            text: 'LOCAL CACHE ', click:()=>{}
+          },
+          {
+            text: 'LOCAL RECOVER ', click:()=>{}
+          },
+        ],
+        onClickExit:(e)=>{
+          history.goBack()
         }
       }}
 

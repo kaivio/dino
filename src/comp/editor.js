@@ -227,7 +227,7 @@ function TabLable({ name, active, index, tabnext, ...props }) {
 
 
 
-function Tool({ title = 'Edit', actions = {}, self }) {
+function Tool({ title = 'Edit', actions = {}, menu = [], self, ...props }) {
   const [message, setMessage] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [saving, setSaving] = useState('wait')
@@ -238,6 +238,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
   const handleWindowClick = (e) => {
     setMenuOpen(false)
   }
+
   useEffect(() => {
     self.current.setMessage = setMessage
     window.addEventListener('click', handleWindowClick)
@@ -253,38 +254,65 @@ function Tool({ title = 'Edit', actions = {}, self }) {
     timeid.current = setTimeout(() => setMessage(''), 4000)
   }, [message])
 
-  const menu_content = [
-    {
-      text: 'NEW', click: () => {
-        self.current.tabnew({
-        })
-        self.current.tabnext(self.current.state.tabLabels.length)
-      }
-    },
-    {
-      text: 'CLOSE', click: () => {
-        self.current.tabclose()
-      }
-    },
-    {
-      text: 'CLOSE OTHER', click: () => {
-        self.current.tabclose(self.current.state.active, true)
-      }
-    },
-    {
-      text: '--',
-    },
-    {
-      text: 'INFO', click: () => {
-        //
-      }
-    },
-  ]
+  let menu_content = menu
+  if (!props.hiddenTabControl) {
+    menu_content = [
+      ...menu_content,
+      {
+        text: 'NEW', click: () => {
+          self.current.tabnew({
+          })
+          self.current.tabnext(self.current.state.tabLabels.length)
+        }
+      },
+      {
+        text: 'CLOSE', click: () => {
+          self.current.tabclose()
+        }
+      },
+      {
+        text: 'CLOSE OTHER', click: () => {
+          self.current.tabclose(self.current.state.active, true)
+        }
+      },
+
+    ]
+  }
+
+
+  if (!props.hiddenSetting) {
+    menu_content = [
+      ...menu_content,
+      {
+        text: '-----',
+      },
+      {
+        text: 'INFO', click: () => {
+          // TODO: 
+        }
+      },
+      {
+        text: 'SETTING...', click: () => {
+          // TODO: 
+        }
+      },
+    ]
+  }
+
+  if (props.onClickExit) {
+    menu_content.push({
+      text: '---'
+    })
+    menu_content.push({
+      text: 'EXIT', click: props.onClickExit
+    })
+  }
+
 
   return (<div>
     <div className={'editor-popup absolute z-50 min-w-[100px] ' + (menuOpen ? '' : 'hidden')}>
       {/* 菜单栏及项目 */}
-      {menu_content.map(({ text, click }, i) => text == '--' ?
+      {menu_content.map(({ text, click }, i) => text.startsWith('--') ?
         <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
           <Button key={i}
             className='block px-4 py-2 !w-full text-left whitespace-nowrap rounded-none'
@@ -326,6 +354,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
             alt='Save' onClick={async (e) => {
               if (saving == 'wait') {
                 setSaving('saving')
+                e.stopPropagation()
 
                 let reset = () => {
                   // if setSaving in ['ok', 'fail']
@@ -339,7 +368,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
                 } catch (error) {
                   setSaving('fail')
                 } finally {
-                  // 套个延时器防抖
+                  // 套个延时器防抖 ?
                   setTimeout(() => {
                     window.addEventListener('click', reset)
                   }, 500)
