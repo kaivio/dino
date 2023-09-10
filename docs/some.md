@@ -49,6 +49,7 @@ export function Box(){
 setState((oldState) => {
   let newState = oldState + 1
   // 不要在这里操作dom！
+  // highlight-next-line
   domWrite(newState)
   return newState
 })
@@ -59,8 +60,10 @@ let data
 flushSync(() => {
   setState((oldState) => {
     let newState = oldState + 1
+    // highlight-start
     // 应该缓存要操作的数据
     data = newState
+    // highlight-end
     return newState
   })
 })
@@ -77,6 +80,7 @@ domWrite(data)
 ## Test
 
 <Box />
+
 
 
 
