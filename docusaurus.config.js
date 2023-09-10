@@ -113,8 +113,17 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
+
+          // { to: '/docs', label: 'Docs', position: 'left' },
+        
           { to: '/blog', label: 'Blog', position: 'left' },
-          { to: '/docs/some', label: 'Some', position: 'left' },
+          {
+            type: 'doc',
+            position: 'left',
+            docId: 'some',
+            label: 'Some',
+          },
+          // { to: '/docs/some', label: 'Some', position: 'left' },
           {
             href: 'https://github.com/facebook/docusaurus',
             label: 'GitHub',

@@ -39,6 +39,10 @@
 
 }
 
+.navbar__link--active {
+  color: var(--ifm-navbar-link-color) !important;
+}
+
 
 .inline-size-max {
   inline-size: max-content;
