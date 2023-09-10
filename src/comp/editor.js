@@ -230,6 +230,7 @@ function TabLable({ name, active, index, tabnext, ...props }) {
 function Tool({ title = 'Edit', actions = {}, self }) {
   const [message, setMessage] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [saving, setSaving] = useState('wait')
   const handleMenuClick = (e) => {
     setMenuOpen(true)
     e.stopPropagation()
@@ -274,7 +275,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
       text: '--',
     },
     {
-      text: 'HELP', click: () => {
+      text: 'INFO', click: () => {
         //
       }
     },
@@ -282,6 +283,7 @@ function Tool({ title = 'Edit', actions = {}, self }) {
 
   return (<div>
     <div className={'editor-popup absolute z-50 min-w-[100px] ' + (menuOpen ? '' : 'hidden')}>
+      {/* 菜单栏及项目 */}
       {menu_content.map(({ text, click }, i) => text == '--' ?
         <div key={i} style={{ borderTop: '0.5px solid', opacity: 0.5 }} /> : (
           <Button key={i}
@@ -292,8 +294,10 @@ function Tool({ title = 'Edit', actions = {}, self }) {
         ))}
     </div>
 
+
     <div className='flex p-2 items-center'>
-      <Button alt='Menu' className='p-2' size='18' icon='more-vertical'
+      {/* 菜单开关 */}
+      <Button alt='Menu' className='p-2' size='18' icon='table'
         onClick={handleMenuClick}
       />
 
@@ -313,13 +317,44 @@ function Tool({ title = 'Edit', actions = {}, self }) {
             commands.undo(self.current.get_editor())
           }}
         />
-        <Button className='p-2' size='18' icon='save'
-          alt='Save'
-          onClick={actions.save}
-        />
+
+        {actions.save &&
+          <Button className={'p-2 ' + (saving == 'saving' ?
+            'animate-spin' : saving == 'wait' ? 'opacity-100 ' : 'opacity-50')}
+
+            size='18' icon={{ saving: 'loader', wait: 'save', disabled: 'save', ok: 'check-circle', fail: 'alert-circle' }[saving]}
+            alt='Save' onClick={async (e) => {
+              if (saving == 'wait') {
+                setSaving('saving')
+
+                let reset = () => {
+                  // if setSaving in ['ok', 'fail']
+                  setSaving('wait')
+                  window.removeEventListener('click', reset)
+                }
+
+                try {
+                  await actions.save(e)
+                  setSaving('ok')
+                } catch (error) {
+                  setSaving('fail')
+                } finally {
+                  // 套个延时器防抖
+                  setTimeout(() => {
+                    window.addEventListener('click', reset)
+                  }, 500)
+                }
+              }
+
+
+            }}
+          />}
         {actions.run &&
-          <Button className='p-2' size='18' icon='play'
-            alt='Run' onClick={actions.run}
+          <Button className='p-2' size='18' icon={'play'}
+            alt='Run' onClick={e => {
+              console.log('// click play');
+              actions.run(e)
+            }}
           />}
 
       </div>
