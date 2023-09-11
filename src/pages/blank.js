@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '@site/src/comp/layout'
+import Layout from '@theme/Layout';
+
 import CodeBlock from '@theme/CodeBlock';
 import * as router from '@docusaurus/router';
 
@@ -24,7 +25,7 @@ export default function Blank() {
   history.listen((e)=>{
     console.log(e)
   })
-  return (<Layout>
+  return (<Layout noNavbar noFooter>
     <div className='bg-emerald-100'
       style={{
         display: 'flex',

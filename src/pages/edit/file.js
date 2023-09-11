@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as router from '@docusaurus/router';
-import Layout from '@site/src/comp/layout'
+// import Layout from '@site/src/comp/layout'
+import Layout from '@theme/Layout';
 
 import Edit from '@site/src/comp/editor';
 
@@ -79,7 +80,7 @@ export default function EditorPage() {
     console.log('run');
   })
 
-  return (<Layout title="Edit ">
+  return (<Layout title="Edit " noNavbar noFooter>
     <div className='h-[100vh]'>
       <Edit self={ref} tools={{
         actions: {

@@ -8,6 +8,7 @@ import Edit from '@site/src/comp/editor';
 
 // return {MAIN, JSX, METADATA, ERROR}
 async function load(path) {
+  path = `src/pages/${path}.js`
   let doc_data = {
     main: '',
     jsx: '',
@@ -25,41 +26,14 @@ async function load(path) {
     return doc_data
   }
 
-  doc_data.main.replace(/^\s*/, '')
-  if (doc_data.main.startsWith('---')) {
-    let m = doc_data.main.match(/---*[\r\n]*(.*?)[\r\n]*---*[\r\n]*(.*)/s)
-    if (m) {
-      doc_data.metadata = m[1]
-      doc_data.main = m[2]
-    }
-  }
-
-  doc_data.main = doc_data.main.replace(/^\s*/, '')
-  if (doc_data.main.startsWith('<!--')) {
-    let m = doc_data.main.match(/\<\!--\s*JSX\s*--\>[\r\n]*(.*?)[\r\n]*\<\!--\s*END\s*JSX\s*--\>[\r\n]*(.*)/s)
-    if (m) {
-      doc_data.jsx = m[1]
-      doc_data.main = m[2]
-    }
-  }
-
   return doc_data
 }
 
 
 async function save(path, { main, jsx, metadata }) {
-  let s = `---
-${metadata}
----
-
-<!-- JSX -->
-
-${jsx}
-
-<!-- END JSX -->
-
-${main}
-`
+  path = `src/pages/${path}.js`
+  console.log(path);
+  let s = main
   await axios.put('/api/open?file=' + path, s, {
     headers: { 'Content-Type': 'text/plain' }
   })
@@ -86,13 +60,13 @@ export default function EditorDoc() {
     let files = [{
       name: 'MAIN',
       doc: data.main,
-      lang: 'markdown'
-    },
-    {
-      name: 'JSX',
-      doc: data.jsx,
       lang: 'jsx'
     },
+    // {
+    //   name: 'JSX',
+    //   doc: data.jsx,
+    //   lang: 'jsx'
+    // },
     {
       name: 'METADATA',
       doc: data.metadata,
@@ -117,10 +91,8 @@ export default function EditorDoc() {
     console.log('save');
 
     let main = ref.current.get_editor(0).state.doc.toString()
-    let jsx = ref.current.get_editor(1).state.doc.toString()
-    let metadata = ref.current.get_editor(2).state.doc.toString()
 
-    save(path, { main, jsx, metadata })
+    save(path, { main})
       .then((res) => {
         //ref.current.setMessage('Saved')
       })
@@ -132,7 +104,7 @@ export default function EditorDoc() {
     console.log('run');
   })
 
-  
+
   return (<Layout title={"Edit " + path} noNavbar noFooter>
     <div className='h-[100vh]'>
       <Edit self={ref} tools={{
@@ -142,18 +114,18 @@ export default function EditorDoc() {
           // run: handleRun,
         },
         hiddenTabControl: true,
-        menu: [ 
+        menu: [
           {
-            text: 'RELOAD', click:()=>{}
+            text: 'RELOAD', click: () => { }
           },
           {
-            text: 'LOCAL CACHE ', click:()=>{}
+            text: 'LOCAL CACHE ', click: () => { }
           },
           {
-            text: 'LOCAL RECOVER ', click:()=>{}
+            text: 'LOCAL RECOVER ', click: () => { }
           },
         ],
-        onClickExit:(e)=>{
+        onClickExit: (e) => {
           history.goBack()
         }
       }}

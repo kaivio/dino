@@ -103,7 +103,7 @@ export default function Paste() {
 
 
   return (
-    <Layout title={"Paste"}>
+    <Layout title={"Paste:"+state.id}>
 
       <div className='flex flex-col p-8'>
 

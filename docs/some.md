@@ -22,10 +22,8 @@ export function Box(){
 
 
 ## Todo
-- [x] **bug** 构建出来的按钮没有激活特效，初步检查原因是tw没有生成bg-*的样式
-  - 加了内联样式临时解决 
 
----
+- [X] **修改导航栏，添加文档页面的编辑入口**
 - [ ] 制作一个按钮组件
   - [x] 基本按钮
   - [X] 图标按钮
@@ -40,9 +38,14 @@ export function Box(){
   - [ ] 移动端符号栏
   - [ ] 工具根据状态变化显示效果 (延后)
 - [ ] /paste 页面：处理非图片类型的文件预览，状态可视化，移除文件
-- [ ] 修改导航栏，添加文档页面的编辑入口
 - [ ] 还有很多事情没做完
-- [x] process  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
+
+---
+- [x] **bug** 构建出来的按钮没有激活特效，初步检查原因是tw没有生成bg-*的样式
+  - 加了内联样式临时解决 
+
+---
+- [x] **Warning**  unstable_flushDiscreteUpdates: Cannot flush updates when React is already rendering.
   
 产生上述警告的原因是因为在渲染期间操作了dom
 ```jsx
@@ -76,10 +79,15 @@ domWrite(data)
 - [tailwindcss](https://tailwindcss.com/docs/customizing-colors)
 
 
-
 ## Test
 
 <Box />
+
+
+
+
+
+
 
 
 
