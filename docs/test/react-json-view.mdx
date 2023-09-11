@@ -2,13 +2,21 @@
 title: Test 1
 slug: test-1
 ---
+
+
+:::caution
+以下代码直接嵌入文档时构建会出错，开发服务器正常
+:::
+
+```jsx
+
+
 import * as internal from '@docusaurus/theme-common/internal';
 
 import ReactJson from 'react-json-view'
 export function MyComponent () {
-  console.log(internal);
-  console.log(metadata);
-  
+  // console.log(internal);
+  // console.log(metadata);
   // const {metadata, isBlogPostPage} = internal.useBlogPost();
   const doc = internal.useDoc();
   return (
@@ -19,12 +27,12 @@ export function MyComponent () {
 };
 
 <MyComponent />
+```
 
+-------------------
 
+```jsx
 
-<!--
-
-构建出错
 import ReactJson from 'react-json-view'
 import axios  from 'axios';
 import BrowserOnly from '@docusaurus/BrowserOnly';
@@ -50,7 +58,11 @@ export const View = function () {
 }
 
 <View /> 
--->
+
+```
+
+---------------
+
 
 ```jsx
 import useGlobalData from '@docusaurus/useGlobalData';
