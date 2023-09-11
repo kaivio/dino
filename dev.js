@@ -8,7 +8,7 @@ const deps = {
 }
 
 
-const logs = fs.createWriteStream('tmp/dev.log', { flags: 'a' })
+const logs = fs.createWriteStream('tmp/dev.log', { flags: 'w' })
 /**
  * 
  * @returns {childProcess}
