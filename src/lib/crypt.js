@@ -1,57 +1,90 @@
-import crypto from "crypto"
+import aes from 'crypto-js/aes';
+import sha256 from 'crypto-js/sha256';
+import md5 from 'crypto-js/md5';
+import base64 from 'crypto-js/enc-base64';
+import hex from 'crypto-js/enc-hex';utf8 
+import utf8 from 'crypto-js/enc-utf8';
+import CTR from 'crypto-js/mode-ctr';
+import CryptoJS from 'crypto-js';
+import PADDING_ZERO from 'crypto-js/pad-zeropadding';
+import FMT_OPENSSL from 'crypto-js/format-openssl';
+
+var JsonFormatter = {
+  stringify: function (cipherParams) {
+    console.log('stringify: ',cipherParams);
+
+    // create json object with ciphertext
+    var jsonObj = { ct: cipherParams.ciphertext.toString(base64) };
+
+    // optionally add iv or salt
+    if (cipherParams.iv) {
+      jsonObj.iv = cipherParams.iv.toString();
+    }
+
+    if (cipherParams.salt) {
+      jsonObj.s = cipherParams.salt.toString();
+    }
+
+    // stringify json object
+    console.log('stringify: ',jsonObj);
+
+    return JSON.stringify(jsonObj);
+  },
+  parse: function (jsonStr) {
+    console.log('parse: ',jsonStr);
+    var jsonObj = JSON.parse(jsonStr);
+
+    // extract ciphertext from json object, and create cipher params object
+    var cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: base64.parse(jsonObj.ct)
+    });
+
+
+    if (jsonObj.iv) {
+      cipherParams.iv = hex.parse(jsonObj.iv);
+    }
+
+    if (jsonObj.s) {
+      cipherParams.salt = hex.parse(jsonObj.s);
+    }
+
+    return cipherParams;
+  }
+};
 
 
 export function kdf(password) {
-  let key = crypto.createHash('sha256')
-    .update(password)
-    .digest('base64')
-  return key
+  return sha256(password)
 }
 
-export function encrypt(key, data) {
-  let key = Buffer.from(key, 'base64')
-  let iv = crypto.randomFillSync(Buffer.alloc(16))
-  data = Buffer.from(data)
-  let cipher = crypto
-    .createCipheriv('aes-256-cbc', key, iv)
-  let size = Buffer.alloc(4)
-  size.writeInt32LE(data.length)
 
-  let makeup = 0
-  let last_block = data.length % 32
-  if (last_block != 0) {
-    makeup = 32 - last_block
-    data = Buffer.concat([
-      data,
-      Buffer.alloc(makeup, 0)])
-  }
-  let encrypted = cipher.update(data)
+export function enc(key, data) {
+  let text = aes.encrypt(data, key, {
+    iv:  md5(key),
+    mode: CTR,
+    padding: PADDING_ZERO,
+    format: FMT_OPENSSL
+  })
 
-  let res = Buffer.concat([iv, size, encrypted])
-  return res.toString('base64')
+  console.log(text.toString());
+  console.log(text.formatter.stringify(text));
+
+
+  return text.formatter.stringify(text)
 }
 
-export function decrypt(key, data) {
-  data = Buffer.from(data, 'base64')
-  let key = Buffer.from(key, 'base64')
-  let iv = data.slice(0, 16)
-  let size = data.slice(16, 20).readInt32LE(0)
+export function dec(key, data) {
+  let text = aes.decrypt(data, key, {
+    iv: md5(key),
+    mode: CTR,
+    padding: PADDING_ZERO,
+    format: FMT_OPENSSL
 
-  let decipher = crypto
-    .createDecipheriv('aes-256-cbc', key, iv)
+  })
 
-  let block = data.slice(20)
-  block = Buffer.concat([block, Buffer.from("🤔")])
-  let decrypted = decipher.update(block)
-  // console.log("bytes: " + size) // 24
-  // console.log('block: ' + decrypted.length) // 16 ??? 
-  // console.log('sum: ' + data.length) // 52
-  // // 52 - 20 = 32 !!!!! 
-  return decrypted.slice(0, size).toString()
+  console.log(text.toString());
+
+  return text.toString(utf8)
 }
 
-export default {
-  kdf,
-  encrypt,
-  decrypt
-}
+export default { kdf, enc, dec }
