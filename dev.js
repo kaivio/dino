@@ -34,8 +34,8 @@ function my_spawn({ title = '', run = 'echo', args = [] }) {
 function start(run_cp1 = true) {
   let cp1, cp2
 
-  console.log('git fetch ');
-  spawnSync('git', ['fetch'], { stdio: 'inherit' })
+  console.log('git pull ');
+  spawnSync('git', ['pull'], { stdio: 'inherit' })
 
   // npm install 
   let deps_str = JSON.stringify(deps, 2, ' ')

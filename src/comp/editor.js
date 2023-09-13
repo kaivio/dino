@@ -325,7 +325,7 @@ function Tool({ title = 'Edit', actions = {}, menu = [], self, ...props }) {
 
     <div className='flex p-2 items-center'>
       {/* 菜单开关 */}
-      <Button alt='Menu' className='p-2' size='18' icon='table'
+      <Button alt='Menu' className='p-2' size='18' icon='edit'
         onClick={handleMenuClick}
       />
 

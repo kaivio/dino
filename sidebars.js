@@ -22,8 +22,15 @@ const fs = require('fs');
 let category_items = []
 let doc_items = []
 fs.readdirSync('docs', { withFileTypes: true }).map((dirent, i) => {
-  console.log(dirent.name);
-  if (i in aside_docs) {
+  console.log('pass: ',dirent.name);
+  if (new Set(aside_docs).has(dirent.name)) {
+    console.log('aside: ',dirent.name);
+
+    return
+  }
+  if(dirent.name == 'index.md'){
+    console.log('index: ',dirent.name);
+    category_items.unshift('index')
     return
   }
   if (dirent.isDirectory()) {
@@ -65,5 +72,6 @@ const sidebars = {
   ]
 };
 
+console.log(sidebars.docs);
 
 module.exports = sidebars;

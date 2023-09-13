@@ -8,7 +8,7 @@ import Edit from '@site/src/comp/editor';
 
 // return {MAIN, JSX, METADATA, ERROR}
 async function load(path) {
-  path = `src/pages/${path}.js`
+  // path = `src/pages/${path}.js`
   let doc_data = {
     main: '',
     jsx: '',
@@ -31,7 +31,7 @@ async function load(path) {
 
 
 async function save(path, { main, jsx, metadata }) {
-  path = `src/pages/${path}.js`
+  // path = `src/pages/${path}.js`
   console.log(path);
   let s = main
   await axios.put('/api/open?file=' + path, s, {

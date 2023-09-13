@@ -1,3 +1,6 @@
+// import process from 'node:process'
+
+
 // A JavaScript function that returns an object.
 // `context` is provided by Docusaurus. Example: siteConfig can be accessed from context.
 // `opts` is the user-defined options.
@@ -8,7 +11,7 @@ async function myPlugin(context, opts) {
     // If you're writing your own local plugin, you will want it to
     // be unique in order not to potentially conflict with imported plugins.
     // A good way will be to add your own project name within.
-    name: 'docusaurus-my-project-cool-plugin',
+    name: 'my-plugin',
 
     // async loadContent() {
     //   // The loadContent hook is executed after siteConfig and env has been loaded.
@@ -16,9 +19,16 @@ async function myPlugin(context, opts) {
     // },
 
     async contentLoaded({content, actions}) {
-      console.log('[contentLoaded]');
+      console.log('[myPlugin: contentLoaded]');
       console.log(content);
       console.log(actions);
+
+      let data = {hello:'world'}
+      for(let k of ['NODE_ENV','BABEL_ENV']){
+        data[k] = process.env[k]
+      }
+
+      await actions.setGlobalData(data)
       // The contentLoaded hook is done after loadContent hook is done.
       // `actions` are set of functional API provided by Docusaurus (e.g. addRoute)
     },

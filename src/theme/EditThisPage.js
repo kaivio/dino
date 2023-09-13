@@ -10,6 +10,7 @@ import {ThemeClassNames} from '@docusaurus/theme-common';
 import IconEdit from '@theme/Icon/Edit';
 import Link from '@docusaurus/Link';
 import ctx from '@site/src/ctx'
+import { useLocation } from '@docusaurus/router';
 
 export default function EditThisPage({editUrl}) {
  const site = useContext(ctx)
@@ -17,6 +18,11 @@ export default function EditThisPage({editUrl}) {
   site.setGstate((state)=>{
     return {editUrl, ...state}
   })
+  return ()=>{
+    site.setGstate((state)=>{
+      return {editUrl:null, ...state}
+    })
+  }
  },[])
   return (
     <Link
