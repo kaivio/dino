@@ -10,11 +10,11 @@ export default function Hello() {
   data = 'hello, world'
   text = crypt.enc(pass, data)
 
-  try{
-  let data2 = 'U2FsdGVkX1+zD9ZBO2QJ7MYT8WqbGPEelJSxXG/wA10='
-   //text = crypt.dec(pass, data2)
-  // text = crypt.dec(crypt.kdf('12345'), data2)
-  }catch(e){
+  try {
+    let data2 = 'U2FsdGVkX1+zD9ZBO2QJ7MYT8WqbGPEelJSxXG/wA10='
+    //text = crypt.dec(pass, data2)
+    // text = crypt.dec(crypt.kdf('12345'), data2)
+  } catch (e) {
     text = e + ''
   }
   return (
@@ -28,14 +28,14 @@ export default function Hello() {
           fontSize: '20px',
           maxWidth: "100vw",
           width: "100%",
-          padding:"15px"
+          padding: "15px"
         }}>
-          <h1>test</h1>
+        <h1>test</h1>
 
         <div className="w-[300px] h-max">
-      <CodeBlock>
-        {text}
-      </CodeBlock>
+          <CodeBlock>
+            {text}
+          </CodeBlock>
         </div>
       </div>
 
