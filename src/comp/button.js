@@ -10,7 +10,7 @@ function ButtonSVGStringWrapper({ children }) {
 }
 
 
-export function ButtonBase({ className, Wrapper, children, ...props }) {
+export function ButtonBase({ className='', Wrapper, children, ...props }) {
   // left-0 right-0 top-[-50%] aspect-square rounded-full  
   props.tabIndex = props.tabIndex || 0
   className += className.indexOf('rounded-') == -1 ? ' rounded-md' : ''

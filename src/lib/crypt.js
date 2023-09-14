@@ -10,7 +10,9 @@ import utf8 from 'crypto-js/enc-utf8';
 // import PADDING_ZERO from 'crypto-js/pad-zeropadding';
 // import FMT_OPENSSL from 'crypto-js/format-openssl';
 
-
+export function hash(msg){
+  return sha256(msg).toString()
+}
 
 export function kdf(password) {
   return sha256(password)
@@ -34,4 +36,4 @@ export function dec(key, data) {
   return text.toString(utf8)
 }
 
-export default { kdf, enc, dec }
+export default {hash, kdf, enc, dec }

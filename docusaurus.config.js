@@ -114,25 +114,40 @@ const config = {
             label: 'Docs',
           },
 
+          
           // { to: '/docs', label: 'Docs', position: 'left' },
         
           { to: '/blog', label: 'Blog', position: 'left' },
+          // {
+          //   type: 'doc',
+          //   position: 'left',
+          //   docId: 'some',
+          //   label: 'Some',
+          // },
+          // {
+          //   type: 'dropdown',
+          //   label: '+',
+          //   position: 'right',
+          //   items: [
+          //     {
+          //       type: 'doc',
+          //       label: 'some',
+          //       docId: 'some',
+          //     },
+          //     // ... more items
+          //   ],
+          // },
           {
-            type: 'doc',
-            position: 'left',
-            docId: 'some',
-            label: 'Some',
+            href: 'https://github.com/facebook/docusaurus',
+            label: 'GitHub',
+            position: 'right',
           },
           {
             type: 'search',
             position: 'right',
           },
           // { to: '/docs/some', label: 'Some', position: 'left' },
-          {
-            href: 'https://github.com/facebook/docusaurus',
-            label: 'GitHub',
-            position: 'right',
-          },
+   
         ],
       },
       footer: {
