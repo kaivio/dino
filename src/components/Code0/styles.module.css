@@ -1,0 +1,15 @@
+.x {
+  pointer-events: none;
+  /* background: #ffffff70; */
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top:0;
+  left: 0;
+  z-index: 65536;
+}
+
+
+.z{
+  color: rgba(255, 217, 0, 0.466);
+}

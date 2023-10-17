@@ -20,6 +20,8 @@ import Footer from '@theme/Footer';
 import LayoutProvider from '@theme/Layout/Provider';
 import ErrorPageContent from '@theme/ErrorPageContent';
 
+
+import Code0 from '../../components/Code0'
 import styles from './styles.module.css';
 import ctx from '@site/src/ctx'
 export default function Layout(props) {
@@ -33,10 +35,10 @@ export default function Layout(props) {
     description,
   } = props;
   useKeyboardNavigation();
-  
-  const [gstate, setGstate] = useState({he:'llo'})
 
-  return (<ctx.Provider value={{gstate, setGstate}}>
+  const [gstate, setGstate] = useState({ he: 'llo' })
+
+  return (<ctx.Provider value={{ gstate, setGstate }}>
     <LayoutProvider>
       <PageMetadata title={title} description={description} />
 
@@ -54,6 +56,7 @@ export default function Layout(props) {
           wrapperClassName,
         )}>
         <ErrorBoundary fallback={(params) => <ErrorPageContent {...params} />}>
+          <Code0 />
           {children}
         </ErrorBoundary>
       </div>

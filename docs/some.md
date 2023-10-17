@@ -83,6 +83,9 @@ domWrite(data)
 
 <Box />
 
+![](/img/test-anim.svg)
+
+
 
 
 
