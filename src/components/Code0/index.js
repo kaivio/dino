@@ -9,6 +9,9 @@ export default function Code0() {
   let res = useRef({})
 
   async function handleTap(e) {
+    if(!(canvas_ref.current instanceof CanvasRenderingContext2D)){
+      return
+    }
     console.log(e)
     let x = e.clientX
     let y = e.clientY
