@@ -1,0 +1,22 @@
+import CodeBlock from '@theme/CodeBlock';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+
+export default function Hello() {
+  return (
+    <BrowserOnly fallback={<div>Loading...</div>}>
+      {() => {
+        let keys = []
+        for(let i=0; i <= localStorage.length; i++){
+          keys.push(localStorage.key(i))
+        }
+        return <>
+        {keys.map((k)=>(<CodeBlock title={k} key={k}>
+          {localStorage.getItem(k)}
+        </CodeBlock>))}
+        </>;
+      }}
+    </BrowserOnly>
+  );
+}
+
+<Hello />
